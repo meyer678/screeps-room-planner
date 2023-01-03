@@ -29,6 +29,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/prismjs": "^1.26.0",
+    "gh-pages": "^4.0.0",
     "prettier": "2.8.1",
     "react-scripts": "5.0.1"
   },
@@ -39,13 +40,15 @@
     ]
   },
   "name": "screeps-room-planner-react",
+  "version": "0.1.0",
+  "homepage": "https://meyer678.github.io/screeps-room-planner-react",
   "private": false,
   "scripts": {
     "build": "react-scripts build",
+    "deploy": "gh-pages -d build",
     "format": "npx prettier --write .",
-    "format:check": "npx prettier --check .",
+    "predeploy": "npm run build",
     "start": "react-scripts start",
     "test": "react-scripts test"
-  },
-  "version": "0.1.0"
+  }
 }
