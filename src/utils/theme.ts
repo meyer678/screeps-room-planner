@@ -15,7 +15,7 @@ export const themeOptions = createTheme({
       contrastText: 'rgba(236,239,255,0.8)',
       dark: '#0a0a0a',
     },
-    divider: '#111',
+    divider: '#333',
     text: {
       primary: '#ccc',
       secondary: '#999',

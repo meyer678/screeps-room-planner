@@ -30,7 +30,7 @@ export default function BottomDrawer(props: {
           <HighlightCode
             code={JSON.stringify({
               rcl,
-              buildings: roomStructuresState.get(),
+              structures: roomStructuresState.get(),
             })}
           />
         </Mui.CardContent>

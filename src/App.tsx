@@ -1,15 +1,12 @@
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Toolbar from '@mui/material/Toolbar';
+import * as Mui from '@mui/material';
 import { useHookstate } from '@hookstate/core';
 
-import TopBar from './layout/TopBar';
-import LeftDrawer from './layout/LeftDrawer';
-import RoomGrid from './layout/RoomGrid';
+import LeftDrawer from './left-drawer/LeftDrawer';
+import RoomGrid from './room-grid/RoomGrid';
 import { SETTINGS } from './utils/constants';
 import { RoomGridMap, RoomGridTerrain, RoomStructures } from './utils/types';
 import { getStructureBrushes } from './utils/helpers';
-import BottomDrawer from './layout/BottomDrawer';
+import BottomDrawer from './bottom-drawer/BottomDrawer';
 
 export default function App() {
   const settingsState = useHookstate(SETTINGS);
@@ -20,9 +17,15 @@ export default function App() {
   const brushes = getStructureBrushes(settingsState.nested('rcl').get());
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <CssBaseline />
-      <TopBar />
+    <Mui.Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Mui.CssBaseline />
+      <Mui.AppBar position='fixed' sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <Mui.Toolbar variant='dense'>
+          <Mui.Typography variant='h6' noWrap component='div'>
+            Screeps Room Planner
+          </Mui.Typography>
+        </Mui.Toolbar>
+      </Mui.AppBar>
       <LeftDrawer
         roomGridState={roomGridState}
         roomGridHoverState={roomGridHoverState}
@@ -31,8 +34,8 @@ export default function App() {
         settingsState={settingsState}
         structureBrushes={brushes}
       />
-      <Box component='main' sx={{ background: ({ palette }) => palette.secondary.dark, flexGrow: 1, p: 3 }}>
-        <Toolbar variant='dense' />
+      <Mui.Box component='main' sx={{ background: ({ palette }) => palette.secondary.dark, flexGrow: 1, p: 3 }}>
+        <Mui.Toolbar variant='dense' />
         <RoomGrid
           roomGridState={roomGridState}
           roomGridHoverState={roomGridHoverState}
@@ -41,8 +44,8 @@ export default function App() {
           settingsState={settingsState}
           structureBrushes={brushes}
         />
-      </Box>
+      </Mui.Box>
       <BottomDrawer settingsState={settingsState} roomStructuresState={roomStructuresState} />
-    </Box>
+    </Mui.Box>
   );
 }

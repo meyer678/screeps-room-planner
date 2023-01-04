@@ -18,13 +18,14 @@ export const getStructureProps = (key: string, rcl = MAX_RCL) => ({
 });
 
 const getIconImage = (key: string, rcl = MAX_RCL) => {
+  const path = window.location.pathname.replace(/\/$/, '');
   if (key === STRUCTURE_CONTROLLER) {
-    return `./images/controller/${rcl}.png`;
+    return `${path}/images/controller/${rcl}.png`;
   }
   if (key === STRUCTURE_EXTENSION) {
-    return './images/extension/' + (rcl === 8 || rcl === 7 ? `${rcl}.png` : '3.png');
+    return `${path}/images/extension/` + (rcl === 8 || rcl === 7 ? `${rcl}.png` : `3.png`);
   }
-  return `./images/structures/${key}.png`;
+  return `${path}/images/structures/${key}.png`;
 };
 
 export const getStructureBrushes = (rcl = MAX_RCL) =>
