@@ -115,7 +115,7 @@ export default function LeftDrawer(props: {
           </StyledAccordionSummary>
           <StyledAccordionDetails>
             <Mui.Box display='flex' flexDirection='column' overflow='auto'>
-              <Mui.Stack direction='column' sx={{ m: 3 }}>
+              <Mui.Stack direction='column' sx={{ m: 2 }}>
                 <Mui.Box alignItems='center' display='flex' flexDirection='row' justifyContent='space-between' mb={1}>
                   <Mui.Typography component='legend' variant='body2'>
                     Controller Level
@@ -134,7 +134,7 @@ export default function LeftDrawer(props: {
                   fullWidth
                   onChange={(_, value) => value && settingsState.rcl.set(+value)}
                   size='small'
-                  sx={{ mb: 3 }}
+                  sx={{ mb: 2 }}
                   value={rcl}
                 >
                   {Array.from(Array(MAX_RCL), (_, i) => ++i).map((level) => (
@@ -143,17 +143,6 @@ export default function LeftDrawer(props: {
                     </Mui.ToggleButton>
                   ))}
                 </Mui.ToggleButtonGroup>
-                <Mui.Typography component='legend' variant='body2' gutterBottom>
-                  Cursor
-                </Mui.Typography>
-                <Mui.Box display='flex' flexDirection='row' justifyContent='space-evenly'>
-                  <Mui.Typography key={`x-${x}`} component='div' sx={{ width: '40%' }} variant='body2'>
-                    X: {x >= 0 ? x : ''}
-                  </Mui.Typography>
-                  <Mui.Typography key={`y-${y}`} component='div' sx={{ width: '40%' }} variant='body2'>
-                    Y: {y >= 0 ? y : ''}
-                  </Mui.Typography>
-                </Mui.Box>
               </Mui.Stack>
             </Mui.Box>
           </StyledAccordionDetails>
@@ -167,7 +156,7 @@ export default function LeftDrawer(props: {
           </StyledAccordionSummary>
           <StyledAccordionDetails>
             <Mui.Box display='flex' flexDirection='column' overflow='auto'>
-              <Mui.Stack direction='column' sx={{ m: 3 }}>
+              <Mui.Stack direction='column' sx={{ m: 2 }}>
                 {props.structureBrushes.map(({ key, image, total, name }) => {
                   const placed = roomStructuresState[key].get()?.length || 0;
                   const disabled = !structureCanBePlaced(key, rcl, placed, TERRAIN_PLAIN);
@@ -241,8 +230,8 @@ export default function LeftDrawer(props: {
           </StyledAccordionSummary>
           <StyledAccordionDetails>
             <Mui.Box display='flex' flexDirection='column' overflow='auto'>
-              <Mui.Stack direction='column' sx={{ m: 3 }}>
-                <Mui.Button onMouseDown={wipeStructures} variant='text' endIcon={<Icons.LayersClear />}>
+              <Mui.Stack direction='column' sx={{ m: 2 }}>
+                <Mui.Button onMouseDown={wipeStructures} variant='text' endIcon={<Icons.FormatColorReset />}>
                   Wipe Structures
                 </Mui.Button>
                 <Mui.Button onMouseDown={wipeTerrain} variant='text' endIcon={<Icons.LayersClear />}>
