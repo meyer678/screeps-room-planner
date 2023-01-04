@@ -1,3 +1,3 @@
-# screeps-room-planner-react
+# screeps-room-planner
 
-Room planner for the programming MMO sandbox game [Screeps: World](https://screeps.com/).
+Room Planner for the programming MMO sandbox game [Screeps: World](https://screeps.com/).
