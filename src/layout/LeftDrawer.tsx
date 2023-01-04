@@ -273,7 +273,7 @@ export default function LeftDrawer(props: {
               const shard = 'shard1';
 
               fetch(
-                `http://cors-anywhere.herokuapp.com/https://screeps.com/api/game/room-terrain?encoded=true&room=${room}&shard=${shard}`
+                `https://cors-anywhere.herokuapp.com/https://screeps.com/api/game/room-terrain?encoded=true&room=${room}&shard=${shard}`
               )
                 .then((res) => res.json())
                 .then((json: ScreepsGameRoomTerrainEncoded) => {
