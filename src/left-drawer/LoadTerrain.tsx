@@ -59,7 +59,7 @@ export default function LoadTerrain(props: {
         <DialogTitle onClose={() => modalOpen.set(false)}>Load Terrain</DialogTitle>
         <Mui.DialogContent dividers>
           <Mui.Typography component='div' variant='caption' sx={{ mb: 2 }}>
-            Input any room in Screeps: World.
+            Enter a room from Screeps: World to load it's terrain.
           </Mui.Typography>
           <Mui.Grid container rowSpacing={2} columnSpacing={2}>
             <Mui.Grid item xs={6}>
