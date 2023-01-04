@@ -39,9 +39,9 @@
       "react-app/jest"
     ]
   },
-  "name": "screeps-room-planner-react",
+  "name": "screeps-room-planner",
   "version": "0.1.0",
-  "homepage": "https://meyer678.github.io/screeps-room-planner-react",
+  "homepage": "https://meyer678.github.io/screeps-room-planner",
   "private": false,
   "scripts": {
     "build": "react-scripts build",
