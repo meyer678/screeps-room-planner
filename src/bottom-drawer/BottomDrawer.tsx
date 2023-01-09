@@ -23,12 +23,12 @@ export default function BottomDrawer() {
     >
       <Mui.Card sx={{ borderRadius: 0, maxHeight: '50vh', overflowY: 'auto' }}>
         <Mui.CardContent>
-          <HighlightCode
-            code={JSON.stringify({
+          <HighlightCode>
+            {JSON.stringify({
               rcl,
               structures: roomStructures,
             })}
-          />
+          </HighlightCode>
         </Mui.CardContent>
       </Mui.Card>
     </Mui.Drawer>
