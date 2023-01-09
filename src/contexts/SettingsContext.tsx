@@ -1,10 +1,10 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { createCtx } from './CreateCtx';
-import { MAX_RCL, STRUCTURE_CONTROLLER } from '../utils/constants';
+import { MAX_RCL, STRUCTURE_BRUSHES } from '../utils/constants';
 
 const initialState = {
   codeDrawerOpen: false,
-  brush: STRUCTURE_CONTROLLER,
+  brush: Object.keys(STRUCTURE_BRUSHES)[0],
   hover: -1,
   rcl: MAX_RCL,
   room: 'E3S1',
@@ -35,7 +35,7 @@ function reducer(state: State, action: Action) {
     case 'set_shard':
       return { ...state, shard: action.shard };
     case 'toggle_code_drawer_open':
-      return { ...state, codeDrawerOpen: state.codeDrawerOpen! };
+      return { ...state, codeDrawerOpen: !state.codeDrawerOpen };
     case 'unset_hover':
       return { ...state, tile: initialState.hover };
     default:
@@ -50,10 +50,14 @@ function useSettings() {
   if (context === undefined) {
     throw new Error('useSettings must be used within a SettingsProvider');
   }
-  return {
-    settings: context.state,
-    updateSettings: context.dispatch,
-  };
+  const { state, dispatch } = context;
+  return useMemo(
+    () => ({
+      settings: state,
+      updateSettings: dispatch,
+    }),
+    [state, dispatch]
+  );
 }
 
 export { SettingsProvider, useSettings };

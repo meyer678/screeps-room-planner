@@ -5,7 +5,7 @@ import {
   STRUCTURE_CONTROLLER,
   STRUCTURE_EXTENSION,
   STRUCTURE_EXTRACTOR,
-  STRUCTURE_NAMES,
+  STRUCTURE_BRUSHES,
   STRUCTURE_ROAD,
   TERRAIN_WALL,
 } from './constants';
@@ -13,7 +13,7 @@ import {
 export const getStructureProps = (key: string, rcl = MAX_RCL) => ({
   key,
   image: getIconImage(key, rcl),
-  name: STRUCTURE_NAMES[key],
+  name: STRUCTURE_BRUSHES[key],
   total: CONTROLLER_STRUCTURES[key][rcl] || 0,
 });
 
@@ -29,7 +29,7 @@ const getIconImage = (key: string, rcl = MAX_RCL) => {
 };
 
 export const getStructureBrushes = (rcl = MAX_RCL) =>
-  Object.keys(STRUCTURE_NAMES).map((key) => getStructureProps(key, rcl));
+  Object.keys(STRUCTURE_BRUSHES).map((key) => getStructureProps(key, rcl));
 
 export const getRequiredRCL = (structure: string) =>
   Math.min(...Object.keys(CONTROLLER_STRUCTURES[structure]).map((v) => +v));

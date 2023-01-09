@@ -5,17 +5,20 @@ import { getRoomTile } from '../utils/helpers';
 import { useSettings } from '../contexts/SettingsContext';
 import { useRoomGrid } from '../contexts/RoomGridContext';
 import { useRoomStructures } from '../contexts/RoomStructuresContext';
+import { useRoomTerrain } from '../contexts/RoomTerrainContext';
 
-export default function ExampleBunker(props: { wipeStructures: () => void; wipeTerrain: () => void }) {
+export default function ExampleBunker(props: { toggleModalOpen: () => void }) {
   const { updateSettings } = useSettings();
   const { updateRoomGrid } = useRoomGrid();
   const { updateRoomStructures } = useRoomStructures();
+  const { updateRoomTerrain } = useRoomTerrain();
 
   return (
     <Mui.Button
       onMouseDown={() => {
-        props.wipeStructures();
-        props.wipeTerrain();
+        updateRoomGrid({ type: 'reset' });
+        updateRoomStructures({ type: 'reset' });
+        updateRoomTerrain({ type: 'reset' });
 
         updateSettings({ type: 'set_rcl', rcl: MAX_RCL });
 
@@ -26,11 +29,12 @@ export default function ExampleBunker(props: { wipeStructures: () => void; wipeT
             updateRoomStructures({ type: 'add_structure', structure, x: pos.x, y: pos.y });
           });
         });
+        props.toggleModalOpen();
       }}
-      variant='text'
+      variant='outlined'
       endIcon={<Icons.AutoFixHigh />}
     >
-      Example Bunker
+      Load Example Bunker
     </Mui.Button>
   );
 }

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { createCtx } from './CreateCtx';
 
 type State = { [tile: number]: string[] };
@@ -30,10 +30,14 @@ function useRoomGrid() {
   if (context === undefined) {
     throw new Error('useRoomGrid must be used within a RoomGridProvider');
   }
-  return {
-    roomGrid: context.state,
-    updateRoomGrid: context.dispatch,
-  };
+  const { state, dispatch } = context;
+  return useMemo(
+    () => ({
+      roomGrid: state,
+      updateRoomGrid: dispatch,
+    }),
+    [state, dispatch]
+  );
 }
 
 export { RoomGridProvider, useRoomGrid };

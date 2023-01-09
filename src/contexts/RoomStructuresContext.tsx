@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { RoomPosition } from '../utils/types';
 import { createCtx } from './CreateCtx';
 
@@ -34,10 +34,14 @@ function useRoomStructures() {
   if (context === undefined) {
     throw new Error('useRoomStructures must be used within a RoomStructuresProvider');
   }
-  return {
-    roomStructures: context.state,
-    updateRoomStructures: context.dispatch,
-  };
+  const { state, dispatch } = context;
+  return useMemo(
+    () => ({
+      roomStructures: state,
+      updateRoomStructures: dispatch,
+    }),
+    [state, dispatch]
+  );
 }
 
 export { RoomStructuresProvider, useRoomStructures };

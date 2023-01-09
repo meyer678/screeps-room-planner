@@ -54,7 +54,7 @@ export const CONTROLLER_STRUCTURES: Record<string, Record<number, number>> = {
   [STRUCTURE_FACTORY]: { 7: 1, 8: 1 },
 };
 
-export const STRUCTURE_NAMES: Record<string, string> = {
+export const STRUCTURE_BRUSHES: Record<string, string> = {
   [STRUCTURE_CONTROLLER]: STRUCTURE_CONTROLLER,
   [STRUCTURE_SPAWN]: STRUCTURE_SPAWN,
   [STRUCTURE_CONTAINER]: STRUCTURE_CONTAINER,

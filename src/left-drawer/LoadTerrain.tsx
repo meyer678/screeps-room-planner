@@ -2,19 +2,13 @@ import * as Mui from '@mui/material';
 import * as Icons from '@mui/icons-material';
 import { ROOM_SIZE, TERRAIN_MASK, TERRAIN_MASK_SWAMP, TERRAIN_MASK_WALL } from '../utils/constants';
 import { getRoomTile } from '../utils/helpers';
-import { ScreepsGameRoomTerrainEncoded } from '../utils/types';
+import { ScreepsGameRoomTerrain } from '../utils/types';
 import { useSettings } from '../contexts/SettingsContext';
 import { useRoomTerrain } from '../contexts/RoomTerrainContext';
 import { useState } from 'react';
-
-const StyledDialog = Mui.styled(Mui.Dialog)(({ theme }) => ({
-  '& .MuiDialogContent-root': {
-    padding: theme.spacing(2),
-  },
-  '& .MuiDialogActions-root': {
-    padding: theme.spacing(1),
-  },
-}));
+import StyledDialog from '../common/StyledDialog';
+import { useRoomGrid } from '../contexts/RoomGridContext';
+import { useRoomStructures } from '../contexts/RoomStructuresContext';
 
 function DialogTitle(props: Mui.DialogTitleProps & { onClose?: () => void }) {
   const { children, onClose, ...other } = props;
@@ -40,12 +34,14 @@ function DialogTitle(props: Mui.DialogTitleProps & { onClose?: () => void }) {
   );
 }
 
-export default function LoadTerrain(props: { wipeStructures: () => void; wipeTerrain: () => void }) {
+export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
   const { settings, updateSettings } = useSettings();
   const { shard, room } = settings;
+  const { updateRoomGrid } = useRoomGrid();
+  const { updateRoomStructures } = useRoomStructures();
   const { updateRoomTerrain } = useRoomTerrain();
 
-  const [wipeStructures, setWipeStructures] = useState(true);
+  const [wipeStructuresChecked, setWipeStructuresChecked] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const roomTiles = [...Array(ROOM_SIZE)];
 
@@ -53,15 +49,15 @@ export default function LoadTerrain(props: { wipeStructures: () => void; wipeTer
 
   return (
     <>
-      <Mui.Button onMouseDown={toggleModalOpen} variant='text' endIcon={<Icons.DownloadForOffline />}>
+      <Mui.Button onMouseDown={toggleModalOpen} variant='outlined' endIcon={<Icons.DownloadForOfflineOutlined />}>
         Load Terrain
       </Mui.Button>
       <StyledDialog open={modalOpen} onClose={toggleModalOpen}>
         <DialogTitle onClose={toggleModalOpen}>Load Terrain</DialogTitle>
         <Mui.DialogContent dividers>
-          <Mui.Typography component='div' variant='caption' sx={{ mb: 2 }}>
-            Enter a room from Screeps: World to load it's terrain.
-          </Mui.Typography>
+          <Mui.FormLabel component='div' sx={{ mb: 2 }}>
+            Import a room from Screeps: World
+          </Mui.FormLabel>
           <Mui.Grid container rowSpacing={2} columnSpacing={2}>
             <Mui.Grid item xs={6}>
               <Mui.FormControl variant='outlined'>
@@ -87,22 +83,24 @@ export default function LoadTerrain(props: { wipeStructures: () => void; wipeTer
           <Mui.FormControlLabel
             label='Wipe Structures'
             control={
-              <Mui.Checkbox defaultChecked={wipeStructures} onChange={(e) => setWipeStructures(e.target.checked)} />
+              <Mui.Checkbox
+                defaultChecked={wipeStructuresChecked}
+                onChange={(e) => setWipeStructuresChecked(e.target.checked)}
+              />
             }
           />
           <Mui.Button
             variant='outlined'
             onMouseDown={() =>
-              fetch(
-                `https://cors-anywhere.herokuapp.com/https://screeps.com/api/game/room-terrain?encoded=true&room=${room}&shard=${shard}`
-              )
+              fetch(`https://screeps.com/api/game/room-terrain?encoded=true&room=${room}&shard=${shard}`)
                 .then((res) => res.json())
-                .then((json: ScreepsGameRoomTerrainEncoded) => {
+                .then((json: ScreepsGameRoomTerrain) => {
                   if (json.ok) {
-                    if (wipeStructures) {
-                      props.wipeStructures();
+                    if (wipeStructuresChecked) {
+                      updateRoomGrid({ type: 'reset' });
+                      updateRoomStructures({ type: 'reset' });
                     }
-                    props.wipeTerrain();
+                    updateRoomTerrain({ type: 'reset' });
                     const bytes = Array.from(json.terrain[0].terrain);
                     if (bytes.length) {
                       roomTiles.forEach((_, y) => {
@@ -116,6 +114,7 @@ export default function LoadTerrain(props: { wipeStructures: () => void; wipeTer
                       });
                     }
                   }
+                  props.toggleModalOpen();
                   toggleModalOpen();
                 })
             }

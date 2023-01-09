@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { createCtx } from './CreateCtx';
 
 type State = { [tile: number]: string };
@@ -25,10 +25,14 @@ function useRoomTerrain() {
   if (context === undefined) {
     throw new Error('useRoomTerrain must be used within a RoomTerrainProvider');
   }
-  return {
-    roomTerrain: context.state,
-    updateRoomTerrain: context.dispatch,
-  };
+  const { state, dispatch } = context;
+  return useMemo(
+    () => ({
+      roomTerrain: state,
+      updateRoomTerrain: dispatch,
+    }),
+    [state, dispatch]
+  );
 }
 
 export { RoomTerrainProvider, useRoomTerrain };

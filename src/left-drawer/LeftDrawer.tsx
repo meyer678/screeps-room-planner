@@ -3,13 +3,10 @@ import * as Icons from '@mui/icons-material';
 import { MAX_RCL, STRUCTURE_CONTROLLER, TERRAIN_PLAIN } from '../utils/constants';
 import { getRequiredRCL, structureCanBePlaced } from '../utils/helpers';
 import { StructureBrush } from '../utils/types';
-import LoadTerrain from './LoadTerrain';
-import ExampleBunker from './ExampleBunker';
 import { useSettings } from '../contexts/SettingsContext';
-import { useRoomGrid } from '../contexts/RoomGridContext';
 import { useRoomStructures } from '../contexts/RoomStructuresContext';
-import { useRoomTerrain } from '../contexts/RoomTerrainContext';
 import { useState } from 'react';
+import RoomActions from './RoomActions';
 
 export const drawerWidth = 300;
 const iconSize = '1.5rem';
@@ -64,13 +61,11 @@ const StyledBadge = Mui.styled(Mui.Badge)<Mui.BadgeProps>(({ theme }) => ({
 
 export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }) {
   const { settings, updateSettings } = useSettings();
-  const { updateRoomGrid } = useRoomGrid();
-  const { roomStructures, updateRoomStructures } = useRoomStructures();
-  const { updateRoomTerrain } = useRoomTerrain();
+  const { roomStructures } = useRoomStructures();
 
   const [roomMenuExpanded, setRoomMenuExpanded] = useState(true);
   const [structuresMenuExpanded, setStructuresMenuExpanded] = useState(true);
-  const [mapControlsMenuExpanded, setMapControlsMenuExpanded] = useState(true);
+  const [actionsMenuExpanded, setActionsMenuExpanded] = useState(true);
   const brushClass = 'brush';
   const controller = props.structureBrushes.find((b) => b.key === STRUCTURE_CONTROLLER);
 
@@ -79,15 +74,6 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
       return (target as HTMLElement).dataset.structure!;
     }
     return getBrush(target.parentElement as HTMLElement);
-  };
-
-  const wipeStructures = () => {
-    updateRoomGrid({ type: 'reset' });
-    updateRoomStructures({ type: 'reset' });
-  };
-
-  const wipeTerrain = () => {
-    updateRoomTerrain({ type: 'reset' });
   };
 
   return (
@@ -220,33 +206,22 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
             </Mui.Box>
           </StyledAccordionDetails>
         </StyledAccordion>
-        <StyledAccordion
-          expanded={mapControlsMenuExpanded}
-          onChange={() => setMapControlsMenuExpanded(!mapControlsMenuExpanded)}
-        >
+        <StyledAccordion expanded={actionsMenuExpanded} onChange={() => setActionsMenuExpanded(!actionsMenuExpanded)}>
           <StyledAccordionSummary>
-            <Mui.Typography>Map Controls</Mui.Typography>
+            <Mui.Typography>Actions</Mui.Typography>
           </StyledAccordionSummary>
           <StyledAccordionDetails>
             <Mui.Box display='flex' flexDirection='column' overflow='auto'>
-              <Mui.Stack direction='column' sx={{ m: 2 }}>
-                <Mui.Button onMouseDown={wipeStructures} variant='text' endIcon={<Icons.FormatColorReset />}>
-                  Wipe Structures
+              <Mui.Stack direction='column' sx={{ m: 2 }} spacing={1}>
+                <RoomActions />
+
+                <Mui.Button
+                  onMouseDown={() => updateSettings({ type: 'toggle_code_drawer_open' })}
+                  variant='outlined'
+                  endIcon={<Icons.DataObject />}
+                >
+                  Get Room Json
                 </Mui.Button>
-                <Mui.Button onMouseDown={wipeTerrain} variant='text' endIcon={<Icons.LayersClear />}>
-                  Wipe Terrain
-                </Mui.Button>
-                <LoadTerrain wipeTerrain={wipeTerrain} wipeStructures={wipeStructures} />
-                <ExampleBunker wipeTerrain={wipeTerrain} wipeStructures={wipeStructures} />
-                {!settings.codeDrawerOpen && (
-                  <Mui.Button
-                    onMouseDown={() => updateSettings({ type: 'toggle_code_drawer_open' })}
-                    variant='text'
-                    endIcon={<Icons.DataObject />}
-                  >
-                    Generate JSON
-                  </Mui.Button>
-                )}
               </Mui.Stack>
             </Mui.Box>
           </StyledAccordionDetails>
