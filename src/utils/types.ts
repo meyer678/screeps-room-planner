@@ -1,6 +1,4 @@
 export type RoomPosition = { x: number; y: number };
-export type RoomGridMap = { [tile: number]: string[] };
-export type RoomGridTerrain = { [tile: number]: string };
 export type RoomMineral = { [mineralType: string]: RoomPosition };
 export type RoomStructures = { [structure: string]: RoomPosition[] };
 

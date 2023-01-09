@@ -1,9 +1,11 @@
 import * as Mui from '@mui/material';
 import * as Icons from '@mui/icons-material';
-import { ROOM_SIZE, SETTINGS, TERRAIN_MASK, TERRAIN_MASK_SWAMP, TERRAIN_MASK_WALL } from '../utils/constants';
+import { ROOM_SIZE, TERRAIN_MASK, TERRAIN_MASK_SWAMP, TERRAIN_MASK_WALL } from '../utils/constants';
 import { getRoomTile } from '../utils/helpers';
-import { RoomGridTerrain, ScreepsGameRoomTerrainEncoded } from '../utils/types';
-import { State, useHookstate } from '@hookstate/core';
+import { ScreepsGameRoomTerrainEncoded } from '../utils/types';
+import { useSettings } from '../contexts/SettingsContext';
+import { useRoomTerrain } from '../contexts/RoomTerrainContext';
+import { useState } from 'react';
 
 const StyledDialog = Mui.styled(Mui.Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -38,25 +40,24 @@ function DialogTitle(props: Mui.DialogTitleProps & { onClose?: () => void }) {
   );
 }
 
-export default function LoadTerrain(props: {
-  roomTerrainState: State<RoomGridTerrain>;
-  settingsState: State<typeof SETTINGS>;
-  wipeStructures: () => void;
-  wipeTerrain: () => void;
-}) {
-  const wipeStructuresChecked = useHookstate(true);
-  const modalOpen = useHookstate(false);
-  const roomTerrainState = useHookstate(props.roomTerrainState);
-  const settingsState = useHookstate(props.settingsState);
+export default function LoadTerrain(props: { wipeStructures: () => void; wipeTerrain: () => void }) {
+  const { settings, updateSettings } = useSettings();
+  const { shard, room } = settings;
+  const { updateRoomTerrain } = useRoomTerrain();
+
+  const [wipeStructures, setWipeStructures] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const roomTiles = [...Array(ROOM_SIZE)];
+
+  const toggleModalOpen = () => setModalOpen(!modalOpen);
 
   return (
     <>
-      <Mui.Button onMouseDown={() => modalOpen.set(true)} variant='text' endIcon={<Icons.DownloadForOffline />}>
+      <Mui.Button onMouseDown={toggleModalOpen} variant='text' endIcon={<Icons.DownloadForOffline />}>
         Load Terrain
       </Mui.Button>
-      <StyledDialog open={modalOpen.get()} onClose={() => modalOpen.set(false)}>
-        <DialogTitle onClose={() => modalOpen.set(false)}>Load Terrain</DialogTitle>
+      <StyledDialog open={modalOpen} onClose={toggleModalOpen}>
+        <DialogTitle onClose={toggleModalOpen}>Load Terrain</DialogTitle>
         <Mui.DialogContent dividers>
           <Mui.Typography component='div' variant='caption' sx={{ mb: 2 }}>
             Enter a room from Screeps: World to load it's terrain.
@@ -66,8 +67,8 @@ export default function LoadTerrain(props: {
               <Mui.FormControl variant='outlined'>
                 <Mui.TextField
                   label='Shard'
-                  defaultValue={settingsState.shard.get()}
-                  onChange={(e) => settingsState.shard.set(e.target.value)}
+                  defaultValue={shard}
+                  onChange={(e) => updateSettings({ type: 'set_shard', shard: e.target.value })}
                 />
               </Mui.FormControl>
             </Mui.Grid>
@@ -75,8 +76,8 @@ export default function LoadTerrain(props: {
               <Mui.FormControl variant='outlined'>
                 <Mui.TextField
                   label='Room'
-                  defaultValue={settingsState.room.get()}
-                  onChange={(e) => settingsState.room.set(e.target.value)}
+                  defaultValue={room}
+                  onChange={(e) => updateSettings({ type: 'set_room', room: e.target.value })}
                 />
               </Mui.FormControl>
             </Mui.Grid>
@@ -86,22 +87,19 @@ export default function LoadTerrain(props: {
           <Mui.FormControlLabel
             label='Wipe Structures'
             control={
-              <Mui.Checkbox
-                defaultChecked={wipeStructuresChecked.get()}
-                onChange={(e) => wipeStructuresChecked.set(e.target.checked)}
-              />
+              <Mui.Checkbox defaultChecked={wipeStructures} onChange={(e) => setWipeStructures(e.target.checked)} />
             }
           />
           <Mui.Button
             variant='outlined'
             onMouseDown={() =>
               fetch(
-                `https://cors-anywhere.herokuapp.com/https://screeps.com/api/game/room-terrain?encoded=true&room=${settingsState.room.get()}&shard=${settingsState.shard.get()}`
+                `https://cors-anywhere.herokuapp.com/https://screeps.com/api/game/room-terrain?encoded=true&room=${room}&shard=${shard}`
               )
                 .then((res) => res.json())
                 .then((json: ScreepsGameRoomTerrainEncoded) => {
                   if (json.ok) {
-                    if (wipeStructuresChecked.get()) {
+                    if (wipeStructures) {
                       props.wipeStructures();
                     }
                     props.wipeTerrain();
@@ -112,13 +110,13 @@ export default function LoadTerrain(props: {
                           const terrain = +bytes.shift()!;
                           if (terrain === TERRAIN_MASK_WALL || terrain === TERRAIN_MASK_SWAMP) {
                             const tile = getRoomTile(x, y);
-                            roomTerrainState[tile].merge(TERRAIN_MASK[terrain]);
+                            updateRoomTerrain({ type: 'add_terrain', tile, terrain: TERRAIN_MASK[terrain] });
                           }
                         });
                       });
                     }
                   }
-                  modalOpen.set(false);
+                  toggleModalOpen();
                 })
             }
           >

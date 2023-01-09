@@ -1,10 +1,9 @@
 import { CSSProperties, useRef } from 'react';
 import { Box, Paper, Tooltip, Typography } from '@mui/material';
 import { useElementSize } from '../hooks/ElementSize';
-import { RoomGridMap, RoomGridTerrain, RoomStructures, StructureBrush } from '../utils/types';
+import { StructureBrush } from '../utils/types';
 import {
   ROOM_SIZE,
-  SETTINGS,
   STRUCTURE_CONTAINER,
   STRUCTURE_RAMPART,
   STRUCTURE_ROAD,
@@ -12,22 +11,18 @@ import {
   TERRAIN_WALL,
 } from '../utils/constants';
 import { getRoomPosition, getRoomTile, positionIsValid, structureCanBePlaced } from '../utils/helpers';
-import { none, State, useHookstate } from '@hookstate/core';
+import { useSettings } from '../contexts/SettingsContext';
+import { useRoomGrid } from '../contexts/RoomGridContext';
+import { useRoomStructures } from '../contexts/RoomStructuresContext';
+import { useRoomTerrain } from '../contexts/RoomTerrainContext';
 
-export default function RoomGrid(props: {
-  roomGridState: State<RoomGridMap>;
-  roomGridHoverState: State<number>;
-  roomStructuresState: State<RoomStructures>;
-  roomTerrainState: State<RoomGridTerrain>;
-  settingsState: State<typeof SETTINGS>;
-  structureBrushes: StructureBrush[];
-}) {
-  const hoverState = useHookstate(props.roomGridHoverState);
-  const roomGridState = useHookstate(props.roomGridState);
-  const roomStructuresState = useHookstate(props.roomStructuresState);
-  const roomTerrainState = useHookstate(props.roomTerrainState);
-  const settingsState = useHookstate(props.settingsState);
-  const { brush, rcl } = settingsState.get();
+export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) {
+  const { settings, updateSettings } = useSettings();
+  const { brush, rcl } = settings;
+  const { roomGrid, updateRoomGrid } = useRoomGrid();
+  const { roomStructures, updateRoomStructures } = useRoomStructures();
+  const { roomTerrain } = useRoomTerrain();
+
   const ref = useRef<HTMLHeadingElement>(null);
   const { width } = useElementSize(ref);
   const size = Math.max(ROOM_SIZE, width) / ROOM_SIZE;
@@ -45,7 +40,7 @@ export default function RoomGrid(props: {
   const handleMouseEvent = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
     const { tile, x, y } = getTileElement(e.target as HTMLElement);
-    hoverState.set(tile);
+    updateSettings({ type: 'set_hover', tile });
     if (e.buttons === 1) {
       addStructure(tile, x, y);
     } else if (e.buttons === 2) {
@@ -56,7 +51,7 @@ export default function RoomGrid(props: {
   const structuresToRemove = (skipBrush = false) =>
     brush === STRUCTURE_RAMPART
       ? []
-      : roomStructuresState.keys.reduce(
+      : Object.keys(roomStructures).reduce(
           (acc: string[], structure) =>
             (skipBrush && brush === structure) ||
             structure === STRUCTURE_RAMPART ||
@@ -68,63 +63,34 @@ export default function RoomGrid(props: {
         );
 
   const addStructure = (tile: number, x: number, y: number) => {
-    const placed = roomStructuresState[brush].get()?.length;
-    const terrain = roomTerrainState[tile].get();
+    const placed = roomStructures[brush]?.length;
+    const terrain = roomTerrain[tile];
     if (structureCanBePlaced(brush, rcl, placed, terrain)) {
       // remove existing structures at this position except ramparts
       structuresToRemove().forEach((structure) => removeStructure(tile, x, y, structure));
       // add structures
-      roomStructuresState[brush].merge([{ x, y }]);
-      roomGridState[tile].merge([brush]);
+      updateRoomStructures({ type: 'add_structure', structure: brush, x, y });
+      updateRoomGrid({ type: 'add_structure', tile, structure: brush });
     }
   };
 
   const removeStructure = (tile: number, x: number, y: number, structure: string) => {
-    // prune roomStructuresState
-    const structurePositions = roomStructuresState[structure].get();
-    if (structurePositions) {
-      const removeKeys = structurePositions.reduce(
-        (acc: { [i: number]: any }, o, i) => ({
-          ...acc,
-          ...(o.x === x && o.y === y ? { [i]: none } : {}),
-        }),
-        {}
-      );
-      if (Object.keys(removeKeys).length) {
-        roomStructuresState[structure].merge(removeKeys);
-      }
-    }
-
-    // prune roomGridState
-    const tileStructures = roomGridState[tile].get();
-    if (tileStructures) {
-      const removeKeys = tileStructures.reduce(
-        (acc: { [i: number]: any }, s, i) => ({
-          ...acc,
-          ...(s === structure ? { [i]: none } : {}),
-        }),
-        {}
-      );
-      if (Object.keys(removeKeys).length) {
-        roomGridState[tile].merge(removeKeys);
-      }
-    }
+    updateRoomGrid({ type: 'remove_structure', tile, structure });
+    updateRoomStructures({ type: 'remove_structure', structure, x, y });
   };
 
   const getCellContent = (tile: number): React.ReactNode => {
-    const hoverTile = hoverState.get();
-    const placedStructures = roomGridState[tile].get();
-    const terrain = roomTerrainState[tile].get();
-    const placed = roomStructuresState[brush].get()?.length;
+    const terrain = roomTerrain[tile];
+    const placed = roomStructures[brush]?.length;
     const previewIcon =
-      hoverTile === tile &&
+      settings.hover === tile &&
       brush !== STRUCTURE_ROAD &&
       structureCanBePlaced(brush, rcl, placed, terrain) &&
       !positionHasStructure(tile, brush);
 
     let structures: string[] = [];
-    if (placedStructures) {
-      structures.push(...placedStructures);
+    if (roomGrid[tile]) {
+      structures.push(...roomGrid[tile]);
     }
     if (previewIcon) {
       structures.push(brush);
@@ -198,16 +164,15 @@ export default function RoomGrid(props: {
   };
 
   const positionHasStructure = (tile: number, structure: string) => {
-    const placedStructures = roomGridState[tile].get();
+    const placedStructures = roomGrid[tile];
     return placedStructures && placedStructures.includes(structure);
   };
 
   const positionHasRoad = (tile: number) => positionHasStructure(tile, STRUCTURE_ROAD);
 
   const getRoadLines = (tile: number, roadStyle: CSSProperties, previewIcon = false) => {
-    const hoverTile = hoverState.get();
     const tileHasRoad = positionHasRoad(tile);
-    const preview = brush === STRUCTURE_ROAD && !tileHasRoad && hoverTile === tile;
+    const preview = brush === STRUCTURE_ROAD && !tileHasRoad && settings.hover === tile;
     const previewColor = 'rgba(107,107,107,0.4)';
     const solidColor = '#6b6b6b';
     const roadColor = preview || previewIcon ? previewColor : solidColor;
@@ -227,7 +192,7 @@ export default function RoomGrid(props: {
           const [cx, cy] = [x + rx, y + ry];
           const ctile = getRoomTile(cx, cy);
           const ctileHasRoad = positionHasRoad(ctile);
-          const cpreview = brush === STRUCTURE_ROAD && !ctileHasRoad && hoverTile === ctile;
+          const cpreview = brush === STRUCTURE_ROAD && !ctileHasRoad && settings.hover === ctile;
           const croadColor = cpreview || preview || previewIcon ? previewColor : solidColor;
           if (positionIsValid(cx, cy) && (cpreview || ctileHasRoad)) {
             return rx === -1 && ry === -1 ? (
@@ -264,6 +229,7 @@ export default function RoomGrid(props: {
               </svg>
             ) : null;
           }
+          return null;
         })
       );
     }
@@ -271,8 +237,7 @@ export default function RoomGrid(props: {
   };
 
   const getTooltip = () => {
-    const hoverTile = hoverState.get();
-    const { x, y } = getRoomPosition(hoverTile);
+    const { x, y } = getRoomPosition(settings.hover);
     return x < 0 && y < 0 ? null : (
       <Typography component='div' variant='body2'>
         X: {x}, Y: {y}
@@ -281,7 +246,7 @@ export default function RoomGrid(props: {
   };
 
   return (
-    <Tooltip arrow color='primary' title={getTooltip()}>
+    <Tooltip arrow color='primary' placement='top' title={getTooltip()}>
       <Box display='flex' justifyContent='center'>
         <Paper
           elevation={6}
@@ -306,7 +271,7 @@ export default function RoomGrid(props: {
                       data-tile={tile}
                       onMouseDown={handleMouseEvent}
                       onMouseOver={handleMouseEvent}
-                      onMouseOut={() => hoverState.set(-1)}
+                      onMouseOut={() => updateSettings({ type: 'unset_hover' })}
                       onContextMenu={(e) => e.preventDefault()}
                       sx={{
                         backgroundColor: ({ palette }) => palette.secondary.light,

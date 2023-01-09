@@ -86,14 +86,6 @@ export const EXTENSION_ENERGY_CAPACITY = {
   8: 200,
 };
 
-export const SETTINGS = {
-  brush: STRUCTURE_CONTROLLER,
-  rcl: MAX_RCL,
-  bottomDrawerOpen: false,
-  room: 'E3S1',
-  shard: 'shard0',
-};
-
 // prettier-ignore
 export const SAMPLE_JSON = {
   rcl: 8,

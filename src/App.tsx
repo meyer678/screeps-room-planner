@@ -1,20 +1,14 @@
 import * as Mui from '@mui/material';
-import { useHookstate } from '@hookstate/core';
 
 import LeftDrawer from './left-drawer/LeftDrawer';
 import RoomGrid from './room-grid/RoomGrid';
-import { SETTINGS } from './utils/constants';
-import { RoomGridMap, RoomGridTerrain, RoomStructures } from './utils/types';
 import { getStructureBrushes } from './utils/helpers';
 import BottomDrawer from './bottom-drawer/BottomDrawer';
+import { useSettings } from './contexts/SettingsContext';
 
 export default function App() {
-  const settingsState = useHookstate(SETTINGS);
-  const roomGridState = useHookstate<RoomGridMap>({});
-  const roomGridHoverState = useHookstate(-1);
-  const roomStructuresState = useHookstate<RoomStructures>({});
-  const roomTerrainState = useHookstate<RoomGridTerrain>({});
-  const brushes = getStructureBrushes(settingsState.nested('rcl').get());
+  const { settings } = useSettings();
+  const brushes = getStructureBrushes(settings.rcl);
 
   return (
     <Mui.Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -26,26 +20,12 @@ export default function App() {
           </Mui.Typography>
         </Mui.Toolbar>
       </Mui.AppBar>
-      <LeftDrawer
-        roomGridState={roomGridState}
-        roomGridHoverState={roomGridHoverState}
-        roomStructuresState={roomStructuresState}
-        roomTerrainState={roomTerrainState}
-        settingsState={settingsState}
-        structureBrushes={brushes}
-      />
+      <LeftDrawer structureBrushes={brushes} />
       <Mui.Box component='main' sx={{ background: ({ palette }) => palette.secondary.dark, flexGrow: 1, p: 3 }}>
         <Mui.Toolbar variant='dense' />
-        <RoomGrid
-          roomGridState={roomGridState}
-          roomGridHoverState={roomGridHoverState}
-          roomStructuresState={roomStructuresState}
-          roomTerrainState={roomTerrainState}
-          settingsState={settingsState}
-          structureBrushes={brushes}
-        />
+        <RoomGrid structureBrushes={brushes} />
       </Mui.Box>
-      <BottomDrawer settingsState={settingsState} roomStructuresState={roomStructuresState} />
+      <BottomDrawer />
     </Mui.Box>
   );
 }

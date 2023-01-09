@@ -1,21 +1,15 @@
 import * as Mui from '@mui/material';
 import * as Icons from '@mui/icons-material';
-import { State, useHookstate } from '@hookstate/core';
-import { MAX_RCL, SAMPLE_JSON, SETTINGS } from '../utils/constants';
-import { RoomGridMap, RoomGridTerrain, RoomStructures } from '../utils/types';
+import { MAX_RCL, SAMPLE_JSON } from '../utils/constants';
 import { getRoomTile } from '../utils/helpers';
+import { useSettings } from '../contexts/SettingsContext';
+import { useRoomGrid } from '../contexts/RoomGridContext';
+import { useRoomStructures } from '../contexts/RoomStructuresContext';
 
-export default function ExampleBunker(props: {
-  roomGridState: State<RoomGridMap>;
-  roomStructuresState: State<RoomStructures>;
-  roomTerrainState: State<RoomGridTerrain>;
-  settingsState: State<typeof SETTINGS>;
-  wipeStructures: () => void;
-  wipeTerrain: () => void;
-}) {
-  const roomGridState = useHookstate(props.roomGridState);
-  const roomStructuresState = useHookstate(props.roomStructuresState);
-  const settingsState = useHookstate(props.settingsState);
+export default function ExampleBunker(props: { wipeStructures: () => void; wipeTerrain: () => void }) {
+  const { updateSettings } = useSettings();
+  const { updateRoomGrid } = useRoomGrid();
+  const { updateRoomStructures } = useRoomStructures();
 
   return (
     <Mui.Button
@@ -23,13 +17,13 @@ export default function ExampleBunker(props: {
         props.wipeStructures();
         props.wipeTerrain();
 
-        settingsState.rcl.set(MAX_RCL);
+        updateSettings({ type: 'set_rcl', rcl: MAX_RCL });
 
         Object.entries(SAMPLE_JSON.structures).forEach(([structure, positions]) => {
-          roomStructuresState[structure].merge(positions);
           positions.forEach((pos) => {
             const tile = getRoomTile(pos.x, pos.y);
-            roomGridState[tile].merge([structure]);
+            updateRoomGrid({ type: 'add_structure', tile, structure });
+            updateRoomStructures({ type: 'add_structure', structure, x: pos.x, y: pos.y });
           });
         });
       }}

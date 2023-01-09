@@ -1,23 +1,19 @@
-import { State, useHookstate } from '@hookstate/core';
 import * as Mui from '@mui/material';
+import { useRoomStructures } from '../contexts/RoomStructuresContext';
+import { useSettings } from '../contexts/SettingsContext';
 
-import { SETTINGS } from '../utils/constants';
-import { RoomStructures } from '../utils/types';
 import HighlightCode from './HighlightCode';
 
-export default function BottomDrawer(props: {
-  roomStructuresState: State<RoomStructures>;
-  settingsState: State<typeof SETTINGS>;
-}) {
-  const roomStructuresState = useHookstate(props.roomStructuresState);
-  const settingsState = useHookstate(props.settingsState);
-  const { rcl } = settingsState.get();
+export default function BottomDrawer() {
+  const { settings, updateSettings } = useSettings();
+  const { codeDrawerOpen, rcl } = settings;
+  const { roomStructures } = useRoomStructures();
 
   return (
     <Mui.Drawer
       anchor='bottom'
-      open={settingsState.bottomDrawerOpen.get()}
-      onClose={() => settingsState.bottomDrawerOpen.set(false)}
+      open={codeDrawerOpen}
+      onClose={() => updateSettings({ type: 'toggle_code_drawer_open' })}
       sx={{
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
@@ -30,7 +26,7 @@ export default function BottomDrawer(props: {
           <HighlightCode
             code={JSON.stringify({
               rcl,
-              structures: roomStructuresState.get(),
+              structures: roomStructures,
             })}
           />
         </Mui.CardContent>

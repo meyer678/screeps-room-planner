@@ -1,11 +1,15 @@
-import { none, State, useHookstate } from '@hookstate/core';
 import * as Mui from '@mui/material';
 import * as Icons from '@mui/icons-material';
-import { MAX_RCL, SETTINGS, STRUCTURE_CONTROLLER, TERRAIN_PLAIN } from '../utils/constants';
-import { getRequiredRCL, getRoomPosition, getRoomTile, structureCanBePlaced } from '../utils/helpers';
-import { RoomGridMap, RoomGridTerrain, RoomStructures, StructureBrush } from '../utils/types';
+import { MAX_RCL, STRUCTURE_CONTROLLER, TERRAIN_PLAIN } from '../utils/constants';
+import { getRequiredRCL, structureCanBePlaced } from '../utils/helpers';
+import { StructureBrush } from '../utils/types';
 import LoadTerrain from './LoadTerrain';
 import ExampleBunker from './ExampleBunker';
+import { useSettings } from '../contexts/SettingsContext';
+import { useRoomGrid } from '../contexts/RoomGridContext';
+import { useRoomStructures } from '../contexts/RoomStructuresContext';
+import { useRoomTerrain } from '../contexts/RoomTerrainContext';
+import { useState } from 'react';
 
 export const drawerWidth = 300;
 const iconSize = '1.5rem';
@@ -58,24 +62,15 @@ const StyledBadge = Mui.styled(Mui.Badge)<Mui.BadgeProps>(({ theme }) => ({
   },
 }));
 
-export default function LeftDrawer(props: {
-  roomGridState: State<RoomGridMap>;
-  roomGridHoverState: State<number>;
-  roomStructuresState: State<RoomStructures>;
-  roomTerrainState: State<RoomGridTerrain>;
-  settingsState: State<typeof SETTINGS>;
-  structureBrushes: StructureBrush[];
-}) {
-  const hoverState = useHookstate(props.roomGridHoverState);
-  const roomGridState = useHookstate(props.roomGridState);
-  const roomStructuresState = useHookstate(props.roomStructuresState);
-  const roomTerrainState = useHookstate(props.roomTerrainState);
-  const settingsState = useHookstate(props.settingsState);
-  const accordionRoomState = useHookstate(true);
-  const accordionStructuresState = useHookstate(true);
-  const accordionMapControlsState = useHookstate(true);
-  const { bottomDrawerOpen, brush, rcl } = settingsState.get();
-  const { x, y } = getRoomPosition(hoverState.get());
+export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }) {
+  const { settings, updateSettings } = useSettings();
+  const { updateRoomGrid } = useRoomGrid();
+  const { roomStructures, updateRoomStructures } = useRoomStructures();
+  const { updateRoomTerrain } = useRoomTerrain();
+
+  const [roomMenuExpanded, setRoomMenuExpanded] = useState(true);
+  const [structuresMenuExpanded, setStructuresMenuExpanded] = useState(true);
+  const [mapControlsMenuExpanded, setMapControlsMenuExpanded] = useState(true);
   const brushClass = 'brush';
   const controller = props.structureBrushes.find((b) => b.key === STRUCTURE_CONTROLLER);
 
@@ -87,11 +82,12 @@ export default function LeftDrawer(props: {
   };
 
   const wipeStructures = () => {
-    [roomGridState, roomStructuresState].forEach((s) => s.keys.forEach((k) => s.merge({ [k]: none })));
+    updateRoomGrid({ type: 'reset' });
+    updateRoomStructures({ type: 'reset' });
   };
 
   const wipeTerrain = () => {
-    roomTerrainState.keys.forEach((k) => roomTerrainState.merge({ [k]: none }));
+    updateRoomTerrain({ type: 'reset' });
   };
 
   return (
@@ -109,7 +105,7 @@ export default function LeftDrawer(props: {
     >
       <Mui.Toolbar variant='dense' />
       <Mui.Box sx={{ overflowY: 'auto' }}>
-        <StyledAccordion expanded={accordionRoomState.get()} onChange={() => accordionRoomState.set((v) => !v)}>
+        <StyledAccordion expanded={roomMenuExpanded} onChange={() => setRoomMenuExpanded(!roomMenuExpanded)}>
           <StyledAccordionSummary>
             <Mui.Typography>Room</Mui.Typography>
           </StyledAccordionSummary>
@@ -122,7 +118,7 @@ export default function LeftDrawer(props: {
                   </Mui.Typography>
                   <Mui.Box>
                     {controller && (
-                      <StyledBadge badgeContent={rcl} color='secondary'>
+                      <StyledBadge badgeContent={settings.rcl} color='secondary'>
                         <Mui.Avatar alt={controller.name} src={controller.image} sx={{ width: 36, height: 36 }} />
                       </StyledBadge>
                     )}
@@ -132,10 +128,10 @@ export default function LeftDrawer(props: {
                   color='primary'
                   exclusive
                   fullWidth
-                  onChange={(_, value) => value && settingsState.rcl.set(+value)}
+                  onChange={(_, value) => value && updateSettings({ type: 'set_rcl', rcl: value })}
                   size='small'
                   sx={{ mb: 2 }}
-                  value={rcl}
+                  value={settings.rcl}
                 >
                   {Array.from(Array(MAX_RCL), (_, i) => ++i).map((level) => (
                     <Mui.ToggleButton key={level} value={level}>
@@ -148,8 +144,8 @@ export default function LeftDrawer(props: {
           </StyledAccordionDetails>
         </StyledAccordion>
         <StyledAccordion
-          expanded={accordionStructuresState.get()}
-          onChange={() => accordionStructuresState.set((v) => !v)}
+          expanded={structuresMenuExpanded}
+          onChange={() => setStructuresMenuExpanded(!structuresMenuExpanded)}
         >
           <StyledAccordionSummary>
             <Mui.Typography>Structures</Mui.Typography>
@@ -158,10 +154,10 @@ export default function LeftDrawer(props: {
             <Mui.Box display='flex' flexDirection='column' overflow='auto'>
               <Mui.Stack direction='column' sx={{ m: 2 }}>
                 {props.structureBrushes.map(({ key, image, total, name }) => {
-                  const placed = roomStructuresState[key].get()?.length || 0;
-                  const disabled = !structureCanBePlaced(key, rcl, placed, TERRAIN_PLAIN);
+                  const placed = roomStructures[key]?.length || 0;
+                  const disabled = !structureCanBePlaced(key, settings.rcl, placed, TERRAIN_PLAIN);
                   const error = total < placed;
-                  const locked = !error && rcl < getRequiredRCL(key);
+                  const locked = !error && settings.rcl < getRequiredRCL(key);
                   return (
                     <StyledButton
                       className={brushClass}
@@ -181,14 +177,16 @@ export default function LeftDrawer(props: {
                           }}
                         />
                       }
-                      onMouseDown={(e) => settingsState.nested('brush').set(getBrush(e.target as HTMLElement))}
+                      onMouseDown={(e) =>
+                        updateSettings({ type: 'set_brush', brush: getBrush(e.target as HTMLElement) })
+                      }
                       sx={{
                         justifyContent: 'space-between',
                         '&& .MuiTouchRipple-rippleVisible': {
                           animationDuration: '200ms',
                         },
                       }}
-                      variant={brush === key ? 'contained' : 'outlined'}
+                      variant={settings.brush === key ? 'contained' : 'outlined'}
                     >
                       <Mui.Box
                         alignItems='center'
@@ -206,7 +204,8 @@ export default function LeftDrawer(props: {
                             disabled={disabled}
                             size='small'
                             sx={{
-                              ...(brush === key && !disabled && { borderColor: ({ palette }) => palette.text.primary }),
+                              ...(settings.brush === key &&
+                                !disabled && { borderColor: ({ palette }) => palette.text.primary }),
                               fontSize: '.7rem',
                               fontWeight: 300,
                             }}
@@ -222,8 +221,8 @@ export default function LeftDrawer(props: {
           </StyledAccordionDetails>
         </StyledAccordion>
         <StyledAccordion
-          expanded={accordionMapControlsState.get()}
-          onChange={() => accordionMapControlsState.set((v) => !v)}
+          expanded={mapControlsMenuExpanded}
+          onChange={() => setMapControlsMenuExpanded(!mapControlsMenuExpanded)}
         >
           <StyledAccordionSummary>
             <Mui.Typography>Map Controls</Mui.Typography>
@@ -237,23 +236,11 @@ export default function LeftDrawer(props: {
                 <Mui.Button onMouseDown={wipeTerrain} variant='text' endIcon={<Icons.LayersClear />}>
                   Wipe Terrain
                 </Mui.Button>
-                <LoadTerrain
-                  roomTerrainState={roomTerrainState}
-                  settingsState={settingsState}
-                  wipeTerrain={wipeTerrain}
-                  wipeStructures={wipeStructures}
-                />
-                <ExampleBunker
-                  roomGridState={roomGridState}
-                  roomStructuresState={roomStructuresState}
-                  roomTerrainState={roomTerrainState}
-                  settingsState={settingsState}
-                  wipeTerrain={wipeTerrain}
-                  wipeStructures={wipeStructures}
-                />
-                {!bottomDrawerOpen && (
+                <LoadTerrain wipeTerrain={wipeTerrain} wipeStructures={wipeStructures} />
+                <ExampleBunker wipeTerrain={wipeTerrain} wipeStructures={wipeStructures} />
+                {!settings.codeDrawerOpen && (
                   <Mui.Button
-                    onMouseDown={() => settingsState.bottomDrawerOpen.set(true)}
+                    onMouseDown={() => updateSettings({ type: 'toggle_code_drawer_open' })}
                     variant='text'
                     endIcon={<Icons.DataObject />}
                   >

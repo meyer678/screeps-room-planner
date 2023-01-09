@@ -12,7 +12,6 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@fontsource/roboto": "^4.5.8",
-    "@hookstate/core": "^4.0.0",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.3",
     "@types/jest": "^27.5.2",
@@ -30,7 +29,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/prismjs": "^1.26.0",
     "gh-pages": "^4.0.0",
-    "prettier": "2.8.1",
+    "prettier": "^2.8.2",
     "react-scripts": "5.0.1"
   },
   "eslintConfig": {
