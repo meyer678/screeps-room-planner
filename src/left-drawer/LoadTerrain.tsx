@@ -108,7 +108,7 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
           </Mui.Button>
         </Mui.DialogActions>
         {formError && (
-          <Mui.Box sx={{ px: 2, pb: 2 }}>
+          <Mui.Box sx={{ backgroundColor: palette.divider, px: 2, pb: 2 }}>
             <Mui.Alert color='error' variant='outlined' sx={{ px: 1, py: 0 }}>
               {formError.message}
             </Mui.Alert>
