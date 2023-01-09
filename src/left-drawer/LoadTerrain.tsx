@@ -10,8 +10,10 @@ import StyledDialog from '../common/StyledDialog';
 import { useRoomGrid } from '../contexts/RoomGridContext';
 import { useRoomStructures } from '../contexts/RoomStructuresContext';
 import DialogTitle from '../common/DialogTitle';
+import { useTheme } from '@mui/material';
 
 export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
+  const { palette } = useTheme();
   const { settings, updateSettings } = useSettings();
   const { shard, room } = settings;
   const { updateRoomGrid } = useRoomGrid();
@@ -32,7 +34,7 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
       </Mui.Button>
       <StyledDialog open={modalOpen} onClose={toggleModalOpen}>
         <DialogTitle onClose={toggleModalOpen}>Load Terrain</DialogTitle>
-        <Mui.DialogContent dividers>
+        <Mui.DialogContent dividers sx={{ backgroundColor: palette.divider }}>
           <Mui.FormLabel component='div' sx={{ mb: 2 }}>
             Import a room from Screeps: World
           </Mui.FormLabel>
@@ -57,7 +59,7 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
             </Mui.Grid>
           </Mui.Grid>
         </Mui.DialogContent>
-        <Mui.DialogActions sx={{ justifyContent: 'space-between', mx: 1 }}>
+        <Mui.DialogActions sx={{ backgroundColor: palette.divider, justifyContent: 'space-between' }}>
           <Mui.FormControlLabel
             label='Wipe Structures'
             control={

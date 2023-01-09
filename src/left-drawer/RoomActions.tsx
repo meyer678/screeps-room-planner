@@ -9,8 +9,10 @@ import { useRoomStructures } from '../contexts/RoomStructuresContext';
 import ExampleBunker from './ExampleBunker';
 import LoadTerrain from './LoadTerrain';
 import DialogTitle from '../common/DialogTitle';
+import { useTheme } from '@mui/material';
 
 export default function RoomActions() {
+  const { palette } = useTheme();
   const { updateRoomGrid } = useRoomGrid();
   const { updateRoomStructures } = useRoomStructures();
   const { updateRoomTerrain } = useRoomTerrain();
@@ -26,7 +28,7 @@ export default function RoomActions() {
       </Mui.Button>
       <StyledDialog open={modalOpen} onClose={toggleModalOpen}>
         <DialogTitle onClose={toggleModalOpen}>Room Actions</DialogTitle>
-        <Mui.DialogContent dividers>
+        <Mui.DialogContent dividers sx={{ backgroundColor: palette.divider }}>
           <Mui.Stack direction='column' spacing={1}>
             <LoadTerrain toggleModalOpen={toggleModalOpen} />
 
