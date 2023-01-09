@@ -43,6 +43,7 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
 
   const [wipeStructuresChecked, setWipeStructuresChecked] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [formError, setFormError] = useState<Error | null>(null);
   const roomTiles = [...Array(ROOM_SIZE)];
 
   const toggleModalOpen = () => setModalOpen(!modalOpen);
@@ -91,9 +92,13 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
           />
           <Mui.Button
             variant='outlined'
-            onMouseDown={() =>
+            onMouseDown={() => {
+              setFormError(null);
               fetch(`https://screeps.com/api/game/room-terrain?encoded=true&room=${room}&shard=${shard}`)
-                .then((res) => res.json())
+                .then((res) => {
+                  if (res.ok) return res.json();
+                  throw new Error('Something went wrong');
+                })
                 .then((json: ScreepsGameRoomTerrain) => {
                   if (json.ok) {
                     if (wipeStructuresChecked) {
@@ -117,11 +122,19 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
                   props.toggleModalOpen();
                   toggleModalOpen();
                 })
-            }
+                .catch(setFormError);
+            }}
           >
             Load Terrain
           </Mui.Button>
         </Mui.DialogActions>
+        {formError && (
+          <Mui.Box sx={{ px: 2, pb: 2 }}>
+            <Mui.Alert color='error' variant='outlined' sx={{ px: 1, py: 0 }}>
+              {formError.message}
+            </Mui.Alert>
+          </Mui.Box>
+        )}
       </StyledDialog>
     </>
   );

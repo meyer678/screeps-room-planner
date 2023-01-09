@@ -1,6 +1,6 @@
 import { CSSProperties, useRef } from 'react';
 import { Box, Paper, Tooltip, Typography } from '@mui/material';
-import { useElementSize } from '../hooks/ElementSize';
+import { useElementSize } from '../hooks/useElementSize';
 import { StructureBrush } from '../utils/types';
 import {
   ROOM_SIZE,
