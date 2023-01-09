@@ -19,7 +19,6 @@ export default function ExampleBunker(props: { toggleModalOpen: () => void }) {
         updateRoomGrid({ type: 'reset' });
         updateRoomStructures({ type: 'reset' });
         updateRoomTerrain({ type: 'reset' });
-
         updateSettings({ type: 'set_rcl', rcl: MAX_RCL });
 
         Object.entries(SAMPLE_JSON.structures).forEach(([structure, positions]) => {

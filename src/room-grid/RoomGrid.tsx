@@ -1,5 +1,5 @@
 import { CSSProperties, useRef } from 'react';
-import { Box, Paper, Tooltip, Typography } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { useElementSize } from '../hooks/useElementSize';
 import { StructureBrush } from '../utils/types';
 import {
@@ -15,9 +15,11 @@ import { useSettings } from '../contexts/SettingsContext';
 import { useRoomGrid } from '../contexts/RoomGridContext';
 import { useRoomStructures } from '../contexts/RoomStructuresContext';
 import { useRoomTerrain } from '../contexts/RoomTerrainContext';
+import { useHoverTile } from '../contexts/HoverTileContext';
 
 export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) {
-  const { settings, updateSettings } = useSettings();
+  const { hoverTile, updateHoverTile } = useHoverTile();
+  const { settings } = useSettings();
   const { brush, rcl } = settings;
   const { roomGrid, updateRoomGrid } = useRoomGrid();
   const { roomStructures, updateRoomStructures } = useRoomStructures();
@@ -40,7 +42,7 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
   const handleMouseEvent = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
     const { tile, x, y } = getTileElement(e.target as HTMLElement);
-    updateSettings({ type: 'set_hover', tile });
+    updateHoverTile({ type: 'set_hover', tile });
     if (e.buttons === 1) {
       addStructure(tile, x, y);
     } else if (e.buttons === 2) {
@@ -83,7 +85,7 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
     const terrain = roomTerrain[tile];
     const placed = roomStructures[brush]?.length;
     const previewIcon =
-      settings.hover === tile &&
+      hoverTile === tile &&
       brush !== STRUCTURE_ROAD &&
       structureCanBePlaced(brush, rcl, placed, terrain) &&
       !positionHasStructure(tile, brush);
@@ -172,7 +174,7 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
 
   const getRoadLines = (tile: number, roadStyle: CSSProperties, previewIcon = false) => {
     const tileHasRoad = positionHasRoad(tile);
-    const preview = brush === STRUCTURE_ROAD && !tileHasRoad && settings.hover === tile;
+    const preview = brush === STRUCTURE_ROAD && !tileHasRoad && hoverTile === tile;
     const previewColor = 'rgba(107,107,107,0.4)';
     const solidColor = '#6b6b6b';
     const roadColor = preview || previewIcon ? previewColor : solidColor;
@@ -192,7 +194,7 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
           const [cx, cy] = [x + rx, y + ry];
           const ctile = getRoomTile(cx, cy);
           const ctileHasRoad = positionHasRoad(ctile);
-          const cpreview = brush === STRUCTURE_ROAD && !ctileHasRoad && settings.hover === ctile;
+          const cpreview = brush === STRUCTURE_ROAD && !ctileHasRoad && hoverTile === ctile;
           const croadColor = cpreview || preview || previewIcon ? previewColor : solidColor;
           if (positionIsValid(cx, cy) && (cpreview || ctileHasRoad)) {
             return rx === -1 && ry === -1 ? (
@@ -236,72 +238,61 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
     return null;
   };
 
-  const getTooltip = () => {
-    const { x, y } = getRoomPosition(settings.hover);
-    return x < 0 && y < 0 ? null : (
-      <Typography component='div' variant='body2'>
-        X: {x}, Y: {y}
-      </Typography>
-    );
-  };
-
   return (
-    <Tooltip arrow color='primary' placement='top' title={getTooltip()}>
-      <Box display='flex' justifyContent='center'>
-        <Paper
-          elevation={6}
-          sx={{
-            borderRadius: 0,
-            minWidth: '500px',
-            maxWidth: 'calc(100vh - 6.25rem)',
-            width: '100%',
-          }}
-        >
-          <Box display='grid' gridTemplateColumns='repeat(50, 1fr)' gap={0} ref={ref}>
-            {width > 0 &&
-              roomTiles.map((_, y) =>
-                roomTiles.map((_, x) => {
-                  const tile = getRoomTile(x, y);
-                  const sizePx = `${size}px`;
-                  return (
-                    <Box
-                      key={tile}
-                      className={tileClass}
-                      component='div'
-                      data-tile={tile}
-                      onMouseDown={handleMouseEvent}
-                      onMouseOver={handleMouseEvent}
-                      onMouseOut={() => updateSettings({ type: 'unset_hover' })}
-                      onContextMenu={(e) => e.preventDefault()}
-                      sx={{
-                        backgroundColor: ({ palette }) => palette.secondary.light,
+    <Box display='flex' justifyContent='center'>
+      <Paper
+        elevation={6}
+        sx={{
+          borderRadius: 0,
+          minWidth: '500px',
+          maxWidth: 'calc(100vh - 6.25rem)',
+          width: '100%',
+        }}
+      >
+        <Box display='grid' gridTemplateColumns='repeat(50, 1fr)' gap={0} ref={ref}>
+          {width > 0 &&
+            roomTiles.map((_, y) =>
+              roomTiles.map((_, x) => {
+                const tile = getRoomTile(x, y);
+                const sizePx = `${size}px`;
+                return (
+                  <Box
+                    key={tile}
+                    className={tileClass}
+                    component='div'
+                    data-tile={tile}
+                    onMouseDown={handleMouseEvent}
+                    onMouseOver={handleMouseEvent}
+                    onMouseOut={() => updateHoverTile({ type: 'reset' })}
+                    onContextMenu={(e) => e.preventDefault()}
+                    sx={{
+                      backgroundColor: ({ palette }) => palette.secondary.light,
+                      height: sizePx,
+                      position: 'relative',
+                      width: 'auto',
+                      ':after': {
+                        backgroundColor: 'rgba(255,255,255,0.08)',
+                        boxShadow: 'inset rgba(0,0,0,0.05) 0 0 0 1px',
+                        content: '""',
                         height: sizePx,
-                        position: 'relative',
-                        width: 'auto',
-                        ':after': {
-                          backgroundColor: 'rgba(255,255,255,0.08)',
-                          boxShadow: 'inset rgba(0,0,0,0.05) 0 0 0 1px',
-                          content: '""',
-                          height: sizePx,
-                          left: 0,
-                          opacity: 0,
-                          position: 'absolute',
-                          top: 0,
-                          width: sizePx,
-                        },
-                        ':hover:after': {
-                          opacity: 1,
-                        },
-                      }}
-                    >
-                      {getCellContent(tile)}
-                    </Box>
-                  );
-                })
-              )}
-          </Box>
-        </Paper>
-      </Box>
-    </Tooltip>
+                        left: 0,
+                        opacity: 0,
+                        position: 'absolute',
+                        top: 0,
+                        width: sizePx,
+                      },
+                      ':hover:after': {
+                        opacity: 1,
+                      },
+                    }}
+                  >
+                    {getCellContent(tile)}
+                  </Box>
+                );
+              })
+            )}
+        </Box>
+      </Paper>
+    </Box>
   );
 }
