@@ -15,7 +15,7 @@ function reducer(state: State, action: Action) {
     case 'add_structure':
       return { ...state, [action.tile]: [...(state[action.tile] || []), action.structure] };
     case 'remove_structure':
-      return { ...state, [action.tile]: (state[action.tile] || []).filter((s) => s === action.structure) };
+      return { ...state, [action.tile]: (state[action.tile] || []).filter((s) => s !== action.structure) };
     case 'reset':
       return initialState;
     default:

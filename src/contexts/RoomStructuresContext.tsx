@@ -16,9 +16,14 @@ function reducer(state: State, action: Action) {
     case 'add_structure':
       return { ...state, [action.structure]: [...(state[action.structure] || []), { x: action.x, y: action.y }] };
     case 'remove_structure':
+      const roomPositions = (state[action.structure] || []).filter(({ x, y }) => !(x === action.x && y === action.y));
+      if (!roomPositions.length) {
+        const { [action.structure]: _, ...otherState } = state;
+        return { ...otherState };
+      }
       return {
         ...state,
-        [action.structure]: (state[action.structure] || []).filter(({ x, y }) => x === action.x && y === action.y),
+        [action.structure]: roomPositions,
       };
     case 'reset':
       return initialState;
