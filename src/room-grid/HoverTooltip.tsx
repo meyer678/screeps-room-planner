@@ -1,12 +1,11 @@
 import * as Mui from '@mui/material';
 import { PropsWithChildren } from 'react';
 
-import { getRoomPosition } from '../utils/helpers';
 import { HoverTileProvider, initialState, useHoverTile } from '../contexts/HoverTileContext';
 
 const StyledTooltip = Mui.styled(({ className, ...props }: Mui.TooltipProps) => (
   <Mui.Tooltip {...props} classes={{ popper: className }} />
-))(({ theme, title }) => ({
+))(({ theme }) => ({
   [`& .${Mui.tooltipClasses.tooltip}`]: {
     backgroundColor: theme.palette.secondary.light,
     color: theme.palette.secondary.contrastText,
@@ -15,11 +14,10 @@ const StyledTooltip = Mui.styled(({ className, ...props }: Mui.TooltipProps) => 
 }));
 
 const TooltipContent = () => {
-  const { hoverTile } = useHoverTile();
-  const { x, y } = getRoomPosition(hoverTile);
-  return hoverTile === initialState ? null : (
+  const { hover } = useHoverTile();
+  return hover.tile === initialState.tile ? null : (
     <Mui.Typography component='div' variant='body2'>
-      X: {x}, Y: {y}
+      X: {hover.x}, Y: {hover.y}
     </Mui.Typography>
   );
 };

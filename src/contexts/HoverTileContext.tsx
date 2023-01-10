@@ -1,16 +1,21 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { createCtx } from './CreateCtx';
 
-type State = number;
+type State = {
+  tile: number;
+  x: number;
+  y: number;
+};
 
-type Action = { type: 'set_hover'; tile: number } | { type: 'reset' };
+type Action = { type: 'set_hover'; tile: number; x: number; y: number } | { type: 'reset' };
 
-const initialState: State = -1;
+const fallbackValue = -1;
+const initialState = { tile: fallbackValue, x: fallbackValue, y: fallbackValue };
 
-function reducer(state: State, action: Action) {
+function reducer(_: State, action: Action) {
   switch (action.type) {
     case 'set_hover':
-      return action.tile;
+      return { tile: action.tile, x: action.x, y: action.y };
     case 'reset':
       return initialState;
     default:
@@ -26,10 +31,13 @@ function useHoverTile() {
     throw new Error('useHoverTile must be used within a HoverTileProvider');
   }
   const { state, dispatch } = context;
-  return {
-    hoverTile: state,
-    updateHoverTile: dispatch,
-  };
+  return useMemo(
+    () => ({
+      hover: state,
+      updateHover: dispatch,
+    }),
+    [dispatch, state]
+  );
 }
 
 export { HoverTileProvider, initialState, useHoverTile };

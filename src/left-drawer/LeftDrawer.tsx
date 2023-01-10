@@ -52,8 +52,8 @@ const StyledAccordionDetails = Mui.styled(Mui.AccordionDetails)({
 
 const StyledBadge = Mui.styled(Mui.Badge)<Mui.BadgeProps>(({ theme }) => ({
   '& .MuiBadge-badge': {
-    right: 18,
-    top: 18,
+    right: 16,
+    top: 16,
     border: `2px solid ${theme.palette.background.paper}`,
     padding: '0 4px',
   },
@@ -65,7 +65,7 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
 
   const [roomMenuExpanded, setRoomMenuExpanded] = useState(true);
   const [structuresMenuExpanded, setStructuresMenuExpanded] = useState(true);
-  const [actionsMenuExpanded, setActionsMenuExpanded] = useState(true);
+  const [actionsMenuExpanded, setActionsMenuExpanded] = useState(false);
   const brushClass = 'brush';
   const controller = props.structureBrushes.find((b) => b.key === STRUCTURE_CONTROLLER);
 
@@ -93,30 +93,26 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
       <Mui.Box sx={{ overflowY: 'auto' }}>
         <StyledAccordion expanded={roomMenuExpanded} onChange={() => setRoomMenuExpanded(!roomMenuExpanded)}>
           <StyledAccordionSummary>
-            <Mui.Typography>Room</Mui.Typography>
+            <Mui.Box alignItems='center' display='flex' flexDirection='row' flexGrow={1} justifyContent='space-between'>
+              <Mui.Typography>Room Controller Level</Mui.Typography>
+              <Mui.Box>
+                {controller && (
+                  <StyledBadge badgeContent={settings.rcl} color='secondary'>
+                    <Mui.Avatar alt={controller.name} src={controller.image} sx={{ width: 32, height: 32 }} />
+                  </StyledBadge>
+                )}
+              </Mui.Box>
+            </Mui.Box>
           </StyledAccordionSummary>
           <StyledAccordionDetails>
             <Mui.Box display='flex' flexDirection='column' overflow='auto'>
               <Mui.Stack direction='column' sx={{ m: 2 }}>
-                <Mui.Box alignItems='center' display='flex' flexDirection='row' justifyContent='space-between' mb={1}>
-                  <Mui.Typography component='legend' variant='body2'>
-                    Controller Level
-                  </Mui.Typography>
-                  <Mui.Box>
-                    {controller && (
-                      <StyledBadge badgeContent={settings.rcl} color='secondary'>
-                        <Mui.Avatar alt={controller.name} src={controller.image} sx={{ width: 36, height: 36 }} />
-                      </StyledBadge>
-                    )}
-                  </Mui.Box>
-                </Mui.Box>
                 <Mui.ToggleButtonGroup
                   color='primary'
                   exclusive
                   fullWidth
                   onChange={(_, value) => value && updateSettings({ type: 'set_rcl', rcl: value })}
                   size='small'
-                  sx={{ mb: 2 }}
                   value={settings.rcl}
                 >
                   {Array.from(Array(MAX_RCL), (_, i) => ++i).map((level) => (
