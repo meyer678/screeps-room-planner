@@ -52,8 +52,8 @@ const StyledAccordionDetails = Mui.styled(Mui.AccordionDetails)({
 
 const StyledBadge = Mui.styled(Mui.Badge)<Mui.BadgeProps>(({ theme }) => ({
   '& .MuiBadge-badge': {
-    right: 16,
-    top: 16,
+    right: 15,
+    top: 15,
     border: `2px solid ${theme.palette.background.paper}`,
     padding: '0 4px',
   },
@@ -98,7 +98,7 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
               <Mui.Box>
                 {controller && (
                   <StyledBadge badgeContent={settings.rcl} color='secondary'>
-                    <Mui.Avatar alt={controller.name} src={controller.image} sx={{ width: 32, height: 32 }} />
+                    <Mui.Avatar alt={controller.name} src={controller.image} sx={{ width: 30, height: 30 }} />
                   </StyledBadge>
                 )}
               </Mui.Box>

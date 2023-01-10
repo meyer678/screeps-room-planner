@@ -239,60 +239,58 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
   };
 
   return (
-    <Box display='flex' justifyContent='center'>
-      <Paper
-        elevation={6}
-        sx={{
-          borderRadius: 0,
-          minWidth: '500px',
-          maxWidth: 'calc(100vh - 6.25rem)',
-          width: '100%',
-        }}
-      >
-        <Box display='grid' gridTemplateColumns='repeat(50, 1fr)' gap={0} ref={ref}>
-          {width > 0 &&
-            roomTiles.map((_, y) =>
-              roomTiles.map((_, x) => {
-                const tile = getRoomTile(x, y);
-                const sizePx = `${size}px`;
-                return (
-                  <Box
-                    key={tile}
-                    className={tileClass}
-                    component='div'
-                    data-tile={tile}
-                    onMouseDown={handleMouseEvent}
-                    onMouseOver={handleMouseEvent}
-                    onMouseOut={() => updateHover({ type: 'reset' })}
-                    onContextMenu={(e) => e.preventDefault()}
-                    sx={{
-                      backgroundColor: ({ palette }) => palette.secondary.light,
+    <Paper
+      elevation={6}
+      sx={{
+        borderRadius: 0,
+        minWidth: '500px',
+        maxWidth: 'calc(100vh - 6.25rem)',
+        width: '100%',
+      }}
+    >
+      <Box display='grid' gridTemplateColumns='repeat(50, 1fr)' gap={0} ref={ref}>
+        {width > 0 &&
+          roomTiles.map((_, y) =>
+            roomTiles.map((_, x) => {
+              const tile = getRoomTile(x, y);
+              const sizePx = `${size}px`;
+              return (
+                <Box
+                  key={tile}
+                  className={tileClass}
+                  component='div'
+                  data-tile={tile}
+                  onMouseDown={handleMouseEvent}
+                  onMouseOver={handleMouseEvent}
+                  onMouseOut={() => updateHover({ type: 'reset' })}
+                  onContextMenu={(e) => e.preventDefault()}
+                  sx={{
+                    backgroundColor: ({ palette }) => palette.secondary.light,
+                    height: sizePx,
+                    position: 'relative',
+                    width: 'auto',
+                    ':after': {
+                      backgroundColor: 'rgba(255,255,255,0.08)',
+                      boxShadow: 'inset rgba(0,0,0,0.05) 0 0 0 1px',
+                      content: '""',
                       height: sizePx,
-                      position: 'relative',
-                      width: 'auto',
-                      ':after': {
-                        backgroundColor: 'rgba(255,255,255,0.08)',
-                        boxShadow: 'inset rgba(0,0,0,0.05) 0 0 0 1px',
-                        content: '""',
-                        height: sizePx,
-                        left: 0,
-                        opacity: 0,
-                        position: 'absolute',
-                        top: 0,
-                        width: sizePx,
-                      },
-                      ':hover:after': {
-                        opacity: 1,
-                      },
-                    }}
-                  >
-                    {getCellContent(tile)}
-                  </Box>
-                );
-              })
-            )}
-        </Box>
-      </Paper>
-    </Box>
+                      left: 0,
+                      opacity: 0,
+                      position: 'absolute',
+                      top: 0,
+                      width: sizePx,
+                    },
+                    ':hover:after': {
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  {getCellContent(tile)}
+                </Box>
+              );
+            })
+          )}
+      </Box>
+    </Paper>
   );
 }

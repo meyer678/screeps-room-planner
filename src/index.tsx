@@ -11,19 +11,22 @@ import { SettingsProvider } from './contexts/SettingsContext';
 import { RoomGridProvider } from './contexts/RoomGridContext';
 import { RoomStructuresProvider } from './contexts/RoomStructuresContext';
 import { RoomTerrainProvider } from './contexts/RoomTerrainContext';
+import { HoverTileProvider } from './contexts/HoverTileContext';
 
 const root = ReactDOM.createRoot(document.getElementById('app') as HTMLElement);
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={themeOptions}>
       <SettingsProvider>
-        <RoomGridProvider>
-          <RoomStructuresProvider>
-            <RoomTerrainProvider>
-              <App />
-            </RoomTerrainProvider>
-          </RoomStructuresProvider>
-        </RoomGridProvider>
+        <HoverTileProvider>
+          <RoomGridProvider>
+            <RoomStructuresProvider>
+              <RoomTerrainProvider>
+                <App />
+              </RoomTerrainProvider>
+            </RoomStructuresProvider>
+          </RoomGridProvider>
+        </HoverTileProvider>
       </SettingsProvider>
     </ThemeProvider>
   </React.StrictMode>

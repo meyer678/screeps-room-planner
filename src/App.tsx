@@ -5,7 +5,7 @@ import RoomGrid from './room-grid/RoomGrid';
 import { getStructureBrushes } from './utils/helpers';
 import BottomDrawer from './bottom-drawer/BottomDrawer';
 import { useSettings } from './contexts/SettingsContext';
-import HoverTooltip from './room-grid/HoverTooltip';
+import HoverTilePanel from './room-grid/HoverTilePanel';
 
 export default function App() {
   const { settings } = useSettings();
@@ -22,11 +22,18 @@ export default function App() {
         </Mui.Toolbar>
       </Mui.AppBar>
       <LeftDrawer structureBrushes={brushes} />
-      <Mui.Box component='main' sx={{ background: ({ palette }) => palette.secondary.dark, flexGrow: 1, p: 3 }}>
+      <Mui.Box
+        component='main'
+        flexDirection='row'
+        flexGrow={1}
+        position='relative'
+        sx={{ background: ({ palette }) => palette.secondary.dark }}
+      >
         <Mui.Toolbar variant='dense' />
-        <HoverTooltip>
+        <Mui.Box display='flex' justifyContent='center' padding={3} position='relative'>
+          <HoverTilePanel />
           <RoomGrid structureBrushes={brushes} />
-        </HoverTooltip>
+        </Mui.Box>
       </Mui.Box>
       <BottomDrawer />
     </Mui.Box>
