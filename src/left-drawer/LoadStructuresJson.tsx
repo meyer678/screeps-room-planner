@@ -1,9 +1,7 @@
 import * as Mui from '@mui/material';
 import * as Icons from '@mui/icons-material';
-import { ROOM_SIZE, TERRAIN_MASK, TERRAIN_MASK_SWAMP, TERRAIN_MASK_WALL } from '../utils/constants';
 import { getRoomTile } from '../utils/helpers';
-import { RoomPosition, RoomStructures, RoomStructuresJson, ScreepsGameRoomTerrain } from '../utils/types';
-import { useSettings } from '../contexts/SettingsContext';
+import { RoomStructuresJson } from '../utils/types';
 import { useRoomTerrain } from '../contexts/RoomTerrainContext';
 import { useState } from 'react';
 import StyledDialog from '../common/StyledDialog';
@@ -32,7 +30,7 @@ export default function LoadStructuresJson(props: { toggleModalOpen: () => void 
         Load Structures
       </Mui.Button>
       <StyledDialog open={modalOpen} onClose={toggleModalOpen}>
-        <DialogTitle onClose={toggleModalOpen}>Load Terrain</DialogTitle>
+        <DialogTitle onClose={toggleModalOpen}>Load Structures</DialogTitle>
         <Mui.DialogContent dividers sx={{ backgroundColor: palette.divider }}>
           <Mui.FormLabel component='div' sx={{ mb: 2 }}>
             Import room structures from JSON

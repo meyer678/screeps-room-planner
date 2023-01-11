@@ -16,7 +16,7 @@ const HoverTilePanel = () => {
         </>
       }
       size='small'
-      sx={{ position: 'absolute', bottom: 0 }}
+      sx={{ fontSize: '.7rem', fontWeight: 300, position: 'absolute', bottom: -2 }}
       variant='outlined'
     />
   );
