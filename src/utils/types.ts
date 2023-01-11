@@ -1,5 +1,14 @@
 export type RoomPosition = { x: number; y: number };
 
+export type RoomStructures = { [structure: string]: RoomPosition[] };
+
+export type RoomStructuresJson = {
+  rcl?: number;
+  room?: string;
+  shard?: string;
+  structures: RoomStructures;
+};
+
 export interface StructureBrush {
   key: string;
   image: string;

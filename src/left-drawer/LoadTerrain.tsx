@@ -44,7 +44,10 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
                 <Mui.TextField
                   label='Shard'
                   defaultValue={shard}
-                  onChange={(e) => updateSettings({ type: 'set_shard', shard: e.target.value })}
+                  onChange={(e) => {
+                    setFormError(null);
+                    updateSettings({ type: 'set_shard', shard: e.target.value });
+                  }}
                 />
               </Mui.FormControl>
             </Mui.Grid>
@@ -53,11 +56,21 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
                 <Mui.TextField
                   label='Room'
                   defaultValue={room}
-                  onChange={(e) => updateSettings({ type: 'set_room', room: e.target.value })}
+                  onChange={(e) => {
+                    setFormError(null);
+                    updateSettings({ type: 'set_room', room: e.target.value });
+                  }}
                 />
               </Mui.FormControl>
             </Mui.Grid>
           </Mui.Grid>
+          {formError && (
+            <Mui.Box sx={{ backgroundColor: palette.divider, mt: 2 }}>
+              <Mui.Alert color='error' variant='outlined' sx={{ px: 1, py: 0 }}>
+                {formError.message}
+              </Mui.Alert>
+            </Mui.Box>
+          )}
         </Mui.DialogContent>
         <Mui.DialogActions sx={{ backgroundColor: palette.divider, justifyContent: 'space-between' }}>
           <Mui.FormControlLabel
@@ -73,6 +86,17 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
             variant='outlined'
             onMouseDown={() => {
               setFormError(null);
+
+              if (!room.length) {
+                setFormError(new Error('Room is required'));
+                return;
+              }
+
+              if (!shard.length) {
+                setFormError(new Error('Shard is required'));
+                return;
+              }
+
               fetch(`https://screeps.com/api/game/room-terrain?encoded=true&room=${room}&shard=${shard}`)
                 .then((res) => {
                   if (res.ok) return res.json();
@@ -107,13 +131,6 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
             Load Terrain
           </Mui.Button>
         </Mui.DialogActions>
-        {formError && (
-          <Mui.Box sx={{ backgroundColor: palette.divider, px: 2, pb: 2 }}>
-            <Mui.Alert color='error' variant='outlined' sx={{ px: 1, py: 0 }}>
-              {formError.message}
-            </Mui.Alert>
-          </Mui.Box>
-        )}
       </StyledDialog>
     </>
   );

@@ -10,6 +10,7 @@ import ExampleBunker from './ExampleBunker';
 import LoadTerrain from './LoadTerrain';
 import DialogTitle from '../common/DialogTitle';
 import { useTheme } from '@mui/material';
+import LoadStructuresJson from './LoadStructuresJson';
 
 export default function RoomActions() {
   const { palette } = useTheme();
@@ -31,6 +32,8 @@ export default function RoomActions() {
         <Mui.DialogContent dividers sx={{ backgroundColor: palette.divider }}>
           <Mui.Stack direction='column' spacing={1}>
             <LoadTerrain toggleModalOpen={toggleModalOpen} />
+
+            <LoadStructuresJson toggleModalOpen={toggleModalOpen} />
 
             <ExampleBunker toggleModalOpen={toggleModalOpen} />
 
