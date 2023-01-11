@@ -43,10 +43,11 @@
   "homepage": "https://meyer678.github.io/screeps-room-planner",
   "private": false,
   "scripts": {
-    "build": "react-scripts build",
-    "deploy": "gh-pages -d build",
+    "build": "PUBLIC_URL=/ react-scripts build",
+    "build-prod": "BUILD_PATH='./build-prod' react-scripts build",
+    "deploy": "gh-pages -d build-prod",
     "format": "npx prettier --write .",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build-prod",
     "start": "react-scripts start",
     "test": "react-scripts test"
   }
