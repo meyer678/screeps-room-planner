@@ -44,8 +44,8 @@
   "private": false,
   "scripts": {
     "build": "PUBLIC_URL=/ react-scripts build",
-    "build-prod": "BUILD_PATH='./build-prod' react-scripts build",
-    "deploy": "gh-pages -d build-prod",
+    "build-prod": "react-scripts build",
+    "deploy": "gh-pages -d build",
     "format": "npx prettier --write .",
     "predeploy": "npm run build-prod",
     "start": "react-scripts start",

@@ -1,25 +1,39 @@
 # screeps-room-planner
 
-Room Planner for Screeps built with React and MUI.
+Room Planner for Screeps built with React and Material UI.
 
-This tool allows Screeps players to plan a room layout and generate JSON describing structure placements.
+:link: https://meyer678.github.io/screeps-room-planner/
+
+This tool allows Screeps players to plan a room layout and export structure placements as JSON.
 
 ### What is Screeps?
 
 [Screeps](https://screeps.com/) is game for programmers, where players code their units' AI by writing JavaScript.
 
-### Features
+### How to use
 
-- Structures
+- Select a structure to activate on the left
+- Left-click the map to place the active structure
+- Right-click the map to delete
 
-  - Select a Structure to "active" it as a brush
-  - Left-click the Map to "paint" the selected structure brush
-  - Right-click the Map to delete all contents of a cell
+### Actions
 
-- Actions
-  - Load Terrain from Screeps World (only works locally)
-  - Load Structures from JSON
-  - Load Example Bunker
-  - Wipe Map Structures
-  - Wipe Map Terrain
-  - Generate Map JSON
+- Load Map Terrain from Screeps World (only works locally)
+- Load Structures from JSON
+- Load Example Bunker
+- Wipe Map Structures
+- Wipe Map Terrain
+- Generate Map JSON
+
+## Scripts
+
+In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in development mode.
+
+### `npm run build`
+
+Builds the optimized app for production to the `build` folder.\
+See the create-react-app page about [deployment](https://create-react-app.dev/docs/deployment/) for more information.
