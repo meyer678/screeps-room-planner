@@ -74,8 +74,10 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
       // add structures
       updateRoomStructures({ type: 'add_structure', structure: brush, x, y });
       updateRoomGrid({ type: 'add_structure', tile, structure: brush });
-    } else {
-      updateSettings({ type: 'unset_brush' });
+      // deselect active brush when 0 remaining
+      if (!structureCanBePlaced(brush, rcl, placed + 1, terrain)) {
+        updateSettings({ type: 'unset_brush' });
+      }
     }
   };
 

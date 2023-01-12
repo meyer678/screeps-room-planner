@@ -193,6 +193,7 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
                             sx={{
                               ...(settings.brush === key &&
                                 !disabled && { borderColor: ({ palette }) => palette.text.primary }),
+                              cursor: 'pointer',
                               fontSize: '.7rem',
                               fontWeight: 300,
                             }}
