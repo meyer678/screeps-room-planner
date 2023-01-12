@@ -159,9 +159,14 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
                           }}
                         />
                       }
-                      onMouseDown={(e) =>
-                        updateSettings({ type: 'set_brush', brush: getBrush(e.target as HTMLElement) })
-                      }
+                      onMouseDown={(e) => {
+                        const brush = getBrush(e.target as HTMLElement);
+                        if (settings.brush === brush) {
+                          updateSettings({ type: 'unset_brush' });
+                        } else {
+                          updateSettings({ type: 'set_brush', brush });
+                        }
+                      }}
                       sx={{
                         justifyContent: 'space-between',
                         '&& .MuiTouchRipple-rippleVisible': {

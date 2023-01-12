@@ -4,13 +4,19 @@ import { MAX_RCL, STRUCTURE_BRUSHES } from '../utils/constants';
 
 const initialState = {
   codeDrawerOpen: false,
-  brush: Object.keys(STRUCTURE_BRUSHES)[0],
+  brush: '' || null,
   rcl: MAX_RCL,
   room: 'E3S1',
   shard: 'shard0',
 };
 
-type State = typeof initialState;
+type State = {
+  codeDrawerOpen: boolean;
+  brush: string | null;
+  rcl: number;
+  room: string;
+  shard: string;
+};
 
 type Action =
   | { type: 'set_brush'; brush: string }
@@ -18,7 +24,7 @@ type Action =
   | { type: 'set_room'; room: string }
   | { type: 'set_shard'; shard: string }
   | { type: 'toggle_code_drawer_open' }
-  | { type: 'unset_hover' };
+  | { type: 'unset_brush' };
 
 function reducer(state: State, action: Action) {
   switch (action.type) {
@@ -32,6 +38,8 @@ function reducer(state: State, action: Action) {
       return { ...state, shard: action.shard };
     case 'toggle_code_drawer_open':
       return { ...state, codeDrawerOpen: !state.codeDrawerOpen };
+    case 'unset_brush':
+      return { ...state, brush: null };
     default:
       throw new Error(`Unknown action for SettingsContext: ${action}`);
   }

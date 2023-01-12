@@ -10,11 +10,7 @@ const HoverTilePanel = () => {
 
   return (
     <Mui.Chip
-      label={
-        <>
-          X: {hover.x}, Y: {hover.y}
-        </>
-      }
+      label={`X: ${hover.x}, Y: ${hover.y}`}
       size='small'
       sx={{ fontSize: '.7rem', fontWeight: 300, position: 'absolute', bottom: -2 }}
       variant='outlined'

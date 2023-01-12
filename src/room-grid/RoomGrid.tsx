@@ -19,7 +19,7 @@ import { useHoverTile } from '../contexts/HoverTileContext';
 
 export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) {
   const { hover, updateHover } = useHoverTile();
-  const { settings } = useSettings();
+  const { settings, updateSettings } = useSettings();
   const { brush, rcl } = settings;
   const { roomGrid, updateRoomGrid } = useRoomGrid();
   const { roomStructures, updateRoomStructures } = useRoomStructures();
@@ -65,7 +65,8 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
         );
 
   const addStructure = (tile: number, x: number, y: number) => {
-    const placed = roomStructures[brush]?.length;
+    if (!brush) return;
+    const placed = roomStructures[brush]?.length || 0;
     const terrain = roomTerrain[tile];
     if (structureCanBePlaced(brush, rcl, placed, terrain)) {
       // remove existing structures at this position except ramparts
@@ -73,6 +74,8 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
       // add structures
       updateRoomStructures({ type: 'add_structure', structure: brush, x, y });
       updateRoomGrid({ type: 'add_structure', tile, structure: brush });
+    } else {
+      updateSettings({ type: 'unset_brush' });
     }
   };
 
@@ -83,8 +86,9 @@ export default function RoomGrid(props: { structureBrushes: StructureBrush[] }) 
 
   const getCellContent = (tile: number): React.ReactNode => {
     const terrain = roomTerrain[tile];
-    const placed = roomStructures[brush]?.length;
+    const placed = brush && roomStructures[brush] ? roomStructures[brush].length : 0;
     const previewIcon =
+      !!brush &&
       hover.tile === tile &&
       brush !== STRUCTURE_ROAD &&
       structureCanBePlaced(brush, rcl, placed, terrain) &&
