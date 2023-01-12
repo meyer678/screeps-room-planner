@@ -196,6 +196,7 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
                               cursor: 'pointer',
                               fontSize: '.7rem',
                               fontWeight: 300,
+                              transition: 'border-color 250ms ease',
                             }}
                             variant='outlined'
                           />
