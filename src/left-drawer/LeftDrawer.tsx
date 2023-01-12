@@ -223,7 +223,7 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
                   variant='outlined'
                   endIcon={<Icons.DataObject />}
                 >
-                  Get Room Json
+                  Generate Map JSON
                 </Mui.Button>
               </Mui.Stack>
             </Mui.Box>

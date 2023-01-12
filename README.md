@@ -1,17 +1,25 @@
 # screeps-room-planner
 
-Room Planner for [Screeps: World](https://screeps.com/), a programming MMO sandbox game.
+Room Planner for Screeps built with React and MUI.
 
-With this tool a Screeps room layout can be drafted and exported to code as a json object.
+This tool allows Screeps players to plan a room layout and generate JSON describing structure placements.
 
 ### What is Screeps?
 
-In Screeps, players write code to control units and structures using an API.
+[Screeps](https://screeps.com/) is game for programmers, where players code their units' AI by writing JavaScript.
 
-Players control rooms in part by spawning units (called creeps), harvesting energy sources, and upgrading the room controller object.
+### Features
 
-A room in Screeps is a closed space of 50x50 cells which connects to other rooms in the game world.
+- Structures
 
-When creep units upgrade a room's controller level, more structures are unlocked that can be constructed and operated using game API functions.
+  - Select a Structure to "active" it as a brush
+  - Left-click the Map to "paint" the selected structure brush
+  - Right-click the Map to delete all contents of a cell
 
-This tool can be useful for Screeps players who want to automate more base-building aspects of their Screeps AI codebase.
+- Actions
+  - Load Terrain from Screeps World (only works locally)
+  - Load Structures from JSON
+  - Load Example Bunker
+  - Wipe Map Structures
+  - Wipe Map Terrain
+  - Generate Map JSON
