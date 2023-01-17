@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 import { createCtx } from './CreateCtx';
-import { MAX_RCL, STRUCTURE_BRUSHES } from '../utils/constants';
+import { MAX_RCL } from '../utils/constants';
 
 const initialState = {
   codeDrawerOpen: false,
@@ -23,7 +23,7 @@ type Action =
   | { type: 'set_rcl'; rcl: number }
   | { type: 'set_room'; room: string }
   | { type: 'set_shard'; shard: string }
-  | { type: 'toggle_code_drawer_open' }
+  | { type: 'open_code_drawer' }
   | { type: 'unset_brush' };
 
 function reducer(state: State, action: Action) {
@@ -36,7 +36,7 @@ function reducer(state: State, action: Action) {
       return { ...state, room: action.room };
     case 'set_shard':
       return { ...state, shard: action.shard };
-    case 'toggle_code_drawer_open':
+    case 'open_code_drawer':
       return { ...state, codeDrawerOpen: !state.codeDrawerOpen };
     case 'unset_brush':
       return { ...state, brush: null };

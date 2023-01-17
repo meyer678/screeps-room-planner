@@ -36,6 +36,21 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "sort-imports": [
+      "error",
+      {
+        "ignoreCase": false,
+        "ignoreDeclarationSort": true,
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": [
+          "none",
+          "all",
+          "multiple",
+          "single"
+        ],
+        "allowSeparatedGroups": true
+      }
     ]
   },
   "name": "screeps-room-planner",
@@ -46,7 +61,7 @@
     "build": "PUBLIC_URL=/ react-scripts build",
     "build-prod": "react-scripts build",
     "deploy": "gh-pages -d build",
-    "format": "npx prettier --write .",
+    "format": "npx prettier --write 'src/**/*.{ts,tsx}'",
     "predeploy": "npm run build-prod",
     "start": "react-scripts start",
     "test": "react-scripts test"

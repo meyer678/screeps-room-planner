@@ -219,7 +219,7 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
                 <RoomActions />
 
                 <Mui.Button
-                  onMouseDown={() => updateSettings({ type: 'toggle_code_drawer_open' })}
+                  onMouseDown={() => updateSettings({ type: 'open_code_drawer' })}
                   variant='outlined'
                   endIcon={<Icons.DataObject />}
                 >

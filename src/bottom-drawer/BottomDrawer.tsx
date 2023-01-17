@@ -13,7 +13,7 @@ export default function BottomDrawer() {
     <Mui.Drawer
       anchor='bottom'
       open={codeDrawerOpen}
-      onClose={() => updateSettings({ type: 'toggle_code_drawer_open' })}
+      onClose={() => updateSettings({ type: 'open_code_drawer' })}
       sx={{
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
