@@ -14,14 +14,13 @@ const initialState: State = {};
 function reducer(state: State, action: Action) {
   switch (action.type) {
     case 'add_structure':
-      //
       return { ...state, [action.structure]: [...(state[action.structure] || []), { x: action.x, y: action.y }] };
     case 'remove_structure':
       const roomPositions = (state[action.structure] || []).filter(({ x, y }) => !(x === action.x && y === action.y));
       if (!roomPositions.length) {
         // destructure state to clean up (take out structures with empty roomPositions[])
-        const { [action.structure]: _, ...otherState } = state;
-        return otherState;
+        const { [action.structure]: _, ...newState } = state;
+        return newState;
       }
       return {
         ...state,

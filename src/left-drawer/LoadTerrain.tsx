@@ -1,19 +1,19 @@
 import * as Mui from '@mui/material';
 import * as Icons from '@mui/icons-material';
+import axios from 'axios';
+import { useState } from 'react';
 import { ROOM_SIZE, TERRAIN_MASK, TERRAIN_MASK_SWAMP, TERRAIN_MASK_WALL } from '../utils/constants';
 import { getRoomTile } from '../utils/helpers';
 import { ScreepsGameRoomTerrain } from '../utils/types';
 import { useSettings } from '../contexts/SettingsContext';
 import { useRoomTerrain } from '../contexts/RoomTerrainContext';
-import { useState } from 'react';
 import StyledDialog from '../common/StyledDialog';
 import { useRoomGrid } from '../contexts/RoomGridContext';
 import { useRoomStructures } from '../contexts/RoomStructuresContext';
 import DialogTitle from '../common/DialogTitle';
-import { useTheme } from '@mui/material';
 
 export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
-  const { palette } = useTheme();
+  const { palette } = Mui.useTheme();
   const { settings, updateSettings } = useSettings();
   const { shard, room } = settings;
   const { updateRoomGrid } = useRoomGrid();
@@ -23,7 +23,7 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
   const [wipeStructuresChecked, setWipeStructuresChecked] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [formError, setFormError] = useState<Error | null>(null);
-  const roomTiles = [...Array(ROOM_SIZE)];
+  const roomTiles = Array.from(Array(ROOM_SIZE));
 
   const toggleModalOpen = () => setModalOpen(!modalOpen);
 
@@ -97,19 +97,16 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
                 return;
               }
 
-              fetch(`https://screeps.com/api/game/room-terrain?encoded=true&room=${room}&shard=${shard}`)
-                .then((res) => {
-                  if (res.ok) return res.json();
-                  throw new Error('Something went wrong');
-                })
-                .then((json: ScreepsGameRoomTerrain) => {
-                  if (json.ok) {
+              axios
+                .get(`https://screeps.com/api/game/room-terrain?encoded=1&room=${room}&shard=${shard}`)
+                .then(({ data }: { data: ScreepsGameRoomTerrain }) => {
+                  if (data.ok) {
                     if (wipeStructuresChecked) {
                       updateRoomGrid({ type: 'reset' });
                       updateRoomStructures({ type: 'reset' });
                     }
                     updateRoomTerrain({ type: 'reset' });
-                    const bytes = Array.from(json.terrain[0].terrain);
+                    const bytes = Array.from(data.terrain[0].terrain);
                     if (bytes.length) {
                       roomTiles.forEach((_, y) => {
                         roomTiles.forEach((_, x) => {

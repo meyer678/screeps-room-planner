@@ -18,6 +18,7 @@
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.10",
+    "axios": "^1.2.3",
     "prismjs": "^1.29.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -36,21 +37,6 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ],
-    "sort-imports": [
-      "error",
-      {
-        "ignoreCase": false,
-        "ignoreDeclarationSort": true,
-        "ignoreMemberSort": false,
-        "memberSyntaxSortOrder": [
-          "none",
-          "all",
-          "multiple",
-          "single"
-        ],
-        "allowSeparatedGroups": true
-      }
     ]
   },
   "name": "screeps-room-planner",

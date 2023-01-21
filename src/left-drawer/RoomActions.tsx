@@ -9,11 +9,10 @@ import { useRoomStructures } from '../contexts/RoomStructuresContext';
 import ExampleBunker from './ExampleBunker';
 import LoadTerrain from './LoadTerrain';
 import DialogTitle from '../common/DialogTitle';
-import { useTheme } from '@mui/material';
 import LoadStructuresJson from './LoadStructuresJson';
 
 export default function RoomActions() {
-  const { palette } = useTheme();
+  const { palette } = Mui.useTheme();
   const { updateRoomGrid } = useRoomGrid();
   const { updateRoomStructures } = useRoomStructures();
   const { updateRoomTerrain } = useRoomTerrain();
