@@ -98,7 +98,7 @@ export default function LoadTerrain(props: { toggleModalOpen: () => void }) {
               }
 
               axios
-                .get(`/api/game/room-terrain?encoded=1&room=${room}&shard=${shard}`)
+                .get(`https://screeps.com/api/game/room-terrain?encoded=1&room=${room}&shard=${shard}`)
                 .then(({ data }: { data: ScreepsGameRoomTerrain }) => {
                   if (data.ok) {
                     if (wipeStructuresChecked) {
