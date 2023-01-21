@@ -12,12 +12,12 @@ import {
 
 export const getStructureProps = (key: string, rcl = MAX_RCL) => ({
   key,
-  image: getIconImage(key, rcl),
+  image: getStructureIconPath(key, rcl),
   name: STRUCTURE_BRUSHES[key],
   total: CONTROLLER_STRUCTURES[key][rcl] || 0,
 });
 
-const getIconImage = (key: string, rcl = MAX_RCL) => {
+const getStructureIconPath = (key: string, rcl = MAX_RCL) => {
   const path = window.location.pathname.replace(/\/$/, '');
   if (key === STRUCTURE_CONTROLLER) {
     return `${path}/images/controller/${rcl}.png`;
@@ -26,6 +26,11 @@ const getIconImage = (key: string, rcl = MAX_RCL) => {
     return `${path}/images/extension/` + (rcl === 8 || rcl === 7 ? `${rcl}.png` : `3.png`);
   }
   return `${path}/images/structures/${key}.png`;
+};
+
+const getResourceIconPath = (resource: string) => {
+  const path = window.location.pathname.replace(/\/$/, '');
+  return `${path}/images/resources/${resource}.png`;
 };
 
 export const getStructureBrushes = (rcl = MAX_RCL) =>

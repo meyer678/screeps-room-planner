@@ -1,6 +1,5 @@
-import { initialState, useHoverTile } from '../contexts/HoverTileContext';
-
 import * as Mui from '@mui/material';
+import { initialState, useHoverTile } from '../contexts/HoverTileContext';
 
 const HoverTilePanel = () => {
   const { hover } = useHoverTile();
