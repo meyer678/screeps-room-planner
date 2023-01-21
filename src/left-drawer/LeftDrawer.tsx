@@ -65,7 +65,7 @@ export default function LeftDrawer(props: { structureBrushes: StructureBrush[] }
 
   const [roomMenuExpanded, setRoomMenuExpanded] = useState(true);
   const [structuresMenuExpanded, setStructuresMenuExpanded] = useState(true);
-  const [actionsMenuExpanded, setActionsMenuExpanded] = useState(false);
+  const [actionsMenuExpanded, setActionsMenuExpanded] = useState(true);
   const brushClass = 'brush';
   const controller = props.structureBrushes.find((b) => b.key === STRUCTURE_CONTROLLER);
 

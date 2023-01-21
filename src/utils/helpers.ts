@@ -28,11 +28,6 @@ const getStructureIconPath = (key: string, rcl = MAX_RCL) => {
   return `${path}/images/structures/${key}.png`;
 };
 
-const getResourceIconPath = (resource: string) => {
-  const path = window.location.pathname.replace(/\/$/, '');
-  return `${path}/images/resources/${resource}.png`;
-};
-
 export const getStructureBrushes = (rcl = MAX_RCL) =>
   Object.keys(STRUCTURE_BRUSHES).map((key) => getStructureProps(key, rcl));
 
