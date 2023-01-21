@@ -42,7 +42,7 @@
   },
   "name": "screeps-room-planner",
   "version": "0.1.0",
-  "homepage": "",
+  "homepage": "https://meyer678.github.io/screeps-room-planner",
   "private": false,
   "scripts": {
     "build": "PUBLIC_URL=/ react-scripts build",
