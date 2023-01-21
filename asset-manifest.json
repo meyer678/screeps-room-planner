@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/screeps-room-planner/static/css/main.326cad3e.css",
-    "main.js": "/screeps-room-planner/static/js/main.7995be74.js",
+    "main.js": "/screeps-room-planner/static/js/main.9278a53c.js",
     "static/media/roboto-all-500-normal.woff": "/screeps-room-planner/static/media/roboto-all-500-normal.0ab669b7a0d19b178f57.woff",
     "static/media/roboto-all-700-normal.woff": "/screeps-room-planner/static/media/roboto-all-700-normal.a457fde362a540fcadff.woff",
     "static/media/roboto-all-400-normal.woff": "/screeps-room-planner/static/media/roboto-all-400-normal.c5d001fa922fa66a147f.woff",
@@ -36,10 +36,10 @@
     "static/media/roboto-greek-ext-700-normal.woff2": "/screeps-room-planner/static/media/roboto-greek-ext-700-normal.bd9854c751441ccc1a70.woff2",
     "index.html": "/screeps-room-planner/index.html",
     "main.326cad3e.css.map": "/screeps-room-planner/static/css/main.326cad3e.css.map",
-    "main.7995be74.js.map": "/screeps-room-planner/static/js/main.7995be74.js.map"
+    "main.9278a53c.js.map": "/screeps-room-planner/static/js/main.9278a53c.js.map"
   },
   "entrypoints": [
     "static/css/main.326cad3e.css",
-    "static/js/main.7995be74.js"
+    "static/js/main.9278a53c.js"
   ]
 }
